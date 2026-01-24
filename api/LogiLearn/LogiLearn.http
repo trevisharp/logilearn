@@ -1,0 +1,6 @@
+@LogiLearn_HostAddress = http://localhost:5148
+
+GET {{LogiLearn_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
