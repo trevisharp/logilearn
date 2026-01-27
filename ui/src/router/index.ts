@@ -1,4 +1,4 @@
-import SimulationView from '@/view/SimulationView.vue'
+import SimulationView from '@/views/SimulationView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({

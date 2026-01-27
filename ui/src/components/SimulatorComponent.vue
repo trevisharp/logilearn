@@ -1,10 +1,8 @@
-<script lang="ts">
-
-</script>
+<script lang="ts"></script>
 
 <template>
     <div>
-        
+        Simulator component here!
     </div>
 </template>
 
