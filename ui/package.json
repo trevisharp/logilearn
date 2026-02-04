@@ -12,8 +12,10 @@
     "lint": "eslint . --fix --cache"
   },
   "dependencies": {
+    "konva": "^10.2.0",
     "pinia": "^3.0.4",
     "vue": "^3.5.26",
+    "vue-konva": "^3.3.0",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
