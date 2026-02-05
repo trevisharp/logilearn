@@ -1,0 +1,1 @@
+export type Signal = 0 | 1 | null

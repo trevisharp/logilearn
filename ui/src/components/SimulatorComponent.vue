@@ -57,13 +57,6 @@ const openContextMenu = (e: KonvaEventObject<PointerEvent>) => {
     }
 }
 
-const handleSelect = (key: string, keyPath: string[]) => {
-    closeMenu();
-
-    console.log(key)
-    console.log(keyPath)
-}
-
 const onKeyDown = (e: KeyboardEvent) => {
     const isCtrl = e.ctrlKey || e.metaKey
 
