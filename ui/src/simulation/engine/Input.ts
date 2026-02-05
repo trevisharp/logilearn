@@ -1,12 +1,12 @@
 import type { Signal } from "./Signal"
 
-export class Output {
+export class Input {
 
     constructor(public tilte: string | null = null) { }
     state: Signal = null
-    onSignalChange?: (input: Output) => void
+    private onSignalChange?: (input: Input) => void
 
-    sendSignal(newState: Signal) {
+    reciveSignal(newState: Signal) {
         if (this.state == newState)
             return
         
@@ -14,4 +14,7 @@ export class Output {
         this.onSignalChange?.(this)
     }
 
+    subscribe(func: (o: Input) => void) {
+        this.onSignalChange = func;
+    }
 }
