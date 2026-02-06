@@ -4,14 +4,15 @@ import { Plus, RefreshLeft, RefreshRight } from '@element-plus/icons-vue';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { Circuit } from '@/simulation/engine/Circuit';
-import { InputGate } from '@/simulation/engine/gates/InputGate';
-import { Renders } from '@/simulation/rendering/Renders';
 import type { RenderContext } from '@/simulation/rendering/RenderContext';
 import Konva from 'konva';
+import type { Command } from '@/simulation/commands/Command';
+import { AddInputGateCommand } from '@/simulation/commands/AddInputGateCommand';
 
-const circuit = ref<Circuit>(new Circuit())
-Renders.load()
+const circuit = new Circuit()
 
+const history: Command[] = []
+const undohistory: Command[] = []
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const layerRef = ref<any>(null)
@@ -57,23 +58,32 @@ const closeMenu = () => menu.value.visible = false;
 
 
 const addInput = () => {
-    const input = new InputGate()
-    input.x = menu.value.x
-    input.y = menu.value.y
-
-    circuit.value.gates.push(input)
-
-    const render = Renders.get(input)
-    render.render(input, getContextRender())
+    const command = new AddInputGateCommand(
+        circuit, getContextRender(),
+        menu.value.x, menu.value.y
+    )
+    command.do()
+    history.push(command)
 }
 
 const undo = () => {
-    console.log("undo")
+    const command = history.pop()
+    if (command === undefined) {
+        return
+    }
+
+    command.undo()
+    undohistory.push(command)
 }
 
 const redo = () => {
-    console.log("redo")
-
+    const command = undohistory.pop()
+    if (command === undefined) {
+        return
+    }
+    
+    command.do()
+    history.push(command)
 }
 
 const handleClick = () => {
@@ -118,9 +128,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
         @contextmenu="openContextMenu"
         @click="handleClick"
         :config="{ width: width, height: height }">
-            <v-layer ref="layerRef">
-                <v-circle :config="{ x: width / 2, y: 10, radius: 60, fill: 'red', draggable: true }"></v-circle>
-            </v-layer>
+            <v-layer ref="layerRef"></v-layer>
         </v-stage>
 
         <el-card

@@ -1,3 +1,4 @@
+import type { RenderContext } from "../rendering/RenderContext";
 import type { Input } from "./Input";
 import type { Output } from "./Output";
 
@@ -11,4 +12,7 @@ export interface Gate {
     onTick(dt: number): void
 
     onClick(): void
+    
+    render(ctx: RenderContext): void
+    unrender(): void
 }
