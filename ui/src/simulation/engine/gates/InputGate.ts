@@ -19,10 +19,6 @@ export class InputGate implements Gate {
     onTick(): void {
         this.outputs[0]?.sendSignal(this.state)
     }
-
-    onClick(): void {
-        this.state = this.state == 0 ? 1 : 0;
-    }
     
     render(ctx: RenderContext): void {
         this.group = new Konva.Group({
@@ -31,7 +27,22 @@ export class InputGate implements Gate {
             draggable: true
         })
         
-        this.group.add(new Konva.Circle({ fill: 'white', radius: 20 }))
+        this.group.add(new Konva.Circle({ fill: 'white', radius: 10 }))
+        this.group.add(new Konva.Circle({ fill: 'black', radius: 8 }))
+
+        const innercircle = new Konva.Circle({ fill: 'black', radius: 7 })
+        this.group.add(innercircle)
+
+        this.group.addEventListener('click', () => {
+            if (this.state == 1) {
+                this.state = 0
+                innercircle.fill('black')
+            }
+            else {
+                this.state = 1
+                innercircle.fill('white')
+            }
+        })
 
         ctx.layer.add(this.group)
     }

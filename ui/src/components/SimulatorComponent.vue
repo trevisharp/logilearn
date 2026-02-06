@@ -39,7 +39,7 @@ onMounted(() =>
     height.value = container.value.clientHeight;
 })
 
-
+let newItemDeslocation = 0
 const menu = ref({
     visible: false,
     x: 0,
@@ -48,6 +48,7 @@ const menu = ref({
 const openContextMenu = (e: KonvaEventObject<PointerEvent>) => {
     e.evt.preventDefault()
     
+    newItemDeslocation = 0
     menu.value = {
         visible: true,
         x: e.evt.clientX,
@@ -60,8 +61,9 @@ const closeMenu = () => menu.value.visible = false;
 const addInput = () => {
     const command = new AddInputGateCommand(
         circuit, getContextRender(),
-        menu.value.x, menu.value.y
+        menu.value.x, menu.value.y + newItemDeslocation
     )
+    newItemDeslocation += 20
     command.do()
     history.push(command)
 }

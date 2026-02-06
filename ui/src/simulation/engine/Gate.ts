@@ -10,8 +10,6 @@ export interface Gate {
     outputs: Output[]
     
     onTick(dt: number): void
-
-    onClick(): void
     
     render(ctx: RenderContext): void
     unrender(): void
