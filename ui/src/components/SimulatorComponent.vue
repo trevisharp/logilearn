@@ -3,18 +3,32 @@ import { ElCard, ElMenu, ElSubMenu, ElMenuItem, ElMenuItemGroup, ElIcon } from '
 import { Plus, RefreshLeft, RefreshRight } from '@element-plus/icons-vue';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { onMounted, onUnmounted, ref } from 'vue';
+import { Circuit } from '@/simulation/engine/Circuit';
+import { InputGate } from '@/simulation/engine/gates/InputGate';
+import { Renders } from '@/simulation/rendering/Renders';
+import type { RenderContext } from '@/simulation/rendering/RenderContext';
+import Konva from 'konva';
+
+const circuit = ref<Circuit>(new Circuit())
+Renders.load()
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const layerRef = ref<any>(null)
+let layer: Konva.Layer
+onMounted(() => {
+    layer = layerRef.value.getNode()
+})
+const getContextRender = () => {
+    return {
+        layer: layer
+    } as RenderContext
+}
+
 
 const container = ref<HTMLElement | null>(null)
-
 const width = ref(0);
 const height = ref(0)
-
-const menu = ref({
-    visible: false,
-    x: 0,
-    y: 0
-})
-
 onMounted(() =>
 {
     if (container.value == null)
@@ -24,7 +38,34 @@ onMounted(() =>
     height.value = container.value.clientHeight;
 })
 
+
+const menu = ref({
+    visible: false,
+    x: 0,
+    y: 0
+})
+const openContextMenu = (e: KonvaEventObject<PointerEvent>) => {
+    e.evt.preventDefault()
+    
+    menu.value = {
+        visible: true,
+        x: e.evt.clientX,
+        y: e.evt.clientY
+    }
+}
 const closeMenu = () => menu.value.visible = false;
+
+
+const addInput = () => {
+    const input = new InputGate()
+    input.x = menu.value.x
+    input.y = menu.value.y
+
+    circuit.value.gates.push(input)
+
+    const render = Renders.get(input)
+    render.render(input, getContextRender())
+}
 
 const undo = () => {
     console.log("undo")
@@ -46,16 +87,6 @@ const handleDrag = () => {
 const handleDrop = () => {
 
 };
-
-const openContextMenu = (e: KonvaEventObject<PointerEvent>) => {
-    e.evt.preventDefault()
-
-    menu.value = {
-        visible: true,
-        x: e.evt.clientX,
-        y: e.evt.clientY
-    }
-}
 
 const onKeyDown = (e: KeyboardEvent) => {
     const isCtrl = e.ctrlKey || e.metaKey
@@ -87,7 +118,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
         @contextmenu="openContextMenu"
         @click="handleClick"
         :config="{ width: width, height: height }">
-            <v-layer>
+            <v-layer ref="layerRef">
                 <v-circle :config="{ x: width / 2, y: 10, radius: 60, fill: 'red', draggable: true }"></v-circle>
             </v-layer>
         </v-stage>
@@ -99,12 +130,17 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
             shadow="always">
             
             <el-menu default-active="2" class="vertical-menu">
+                
                 <el-sub-menu index="add">
                     <template #title>
                         <el-icon><plus color="white"/></el-icon>
                         <span class="item-title">Add</span>
                     </template>
                     <el-menu-item-group title="Basic Gates" class="item-group">
+                        <el-menu-item index="input-gate" class="sub-menu-item" @click="addInput">Input</el-menu-item>
+                    </el-menu-item-group>
+
+                    <el-menu-item-group title="Logic" class="item-group">
                         <el-menu-item index="or-gate" class="sub-menu-item">Or Gate</el-menu-item>
                         <el-menu-item index="and-gate" class="sub-menu-item">And Gate</el-menu-item>
                         <el-menu-item index="not-gate" class="sub-menu-item">Not Gate</el-menu-item>
@@ -122,6 +158,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
                 </el-menu-item>
 
             </el-menu>
+
         </el-card>
 
     </div>
