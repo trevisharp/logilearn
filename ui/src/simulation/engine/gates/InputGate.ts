@@ -3,6 +3,7 @@ import type { Gate } from "../Gate";
 import { Output } from "../Output";
 import type { Signal } from "../Signal";
 import Konva from "konva";
+import type { VisualItem } from "@/simulation/rendering/VisualItem";
 
 export class InputGate implements Gate {
     type = "input"
@@ -14,30 +15,17 @@ export class InputGate implements Gate {
     inputs = []
     outputs = [ new Output() ]
 
-    group: Konva.Group | null = null
+    item: VisualItem = { group: null }
 
     onTick(): void {
         this.outputs[0]?.sendSignal(this.state)
     }
+
+    getVisualItem(): VisualItem {
+        return this.item
+    }
     
     render(ctx: RenderContext): void {
-        this.group = this.buildGroup()
-        ctx.layer.add(this.group)
-    }
-
-    unrender(): void {
-        if (this.group === null) {
-            return
-        }
-
-        this.group.destroy()
-    }
-
-    buildGroup(): Konva.Group {
-        if (this.group !== null) {
-            return this.group
-        }
-
         const group = new Konva.Group({
             x: this.x,
             y: this.y,
@@ -60,7 +48,19 @@ export class InputGate implements Gate {
                 innercircle.fill('white')
             }
         })
+        this.item.group = group
+
+        ctx.layer.add(this.item.group)
+        ctx.map.set(this.item.group, this)
+    }
+
+    unrender(ctx: RenderContext): void {
+        if (this.item.group === null) {
+            return
+        }
         
-        return group
+        ctx.map.delete(this.item.group)
+        this.item.group.destroy()
+        this.item.group = null
     }
 }

@@ -12,10 +12,9 @@ export class AddInputGateCommand implements Command {
         public y: number) 
         { }
 
-    inputGate: InputGate | null = null
+    inputGate: InputGate = new InputGate()
     
     do(): void {
-        this.inputGate = new InputGate()
         this.inputGate.x = this.x
         this.inputGate.y = this.y
 
@@ -29,6 +28,6 @@ export class AddInputGateCommand implements Command {
             return
         }
         this.circuit.gates = this.circuit.gates.filter(g => g !== this.inputGate)
-        this.inputGate.unrender()
+        this.inputGate.unrender(this.ctx)
     }
 }

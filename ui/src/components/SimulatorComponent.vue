@@ -9,33 +9,10 @@ import Konva from 'konva';
 import type { Command } from '@/simulation/commands/Command';
 import { AddInputGateCommand } from '@/simulation/commands/AddInputGateCommand';
 import { MoveGateCommand } from '@/simulation/commands/MoveGateCommand';
+import type { SimulationItem } from '@/simulation/engine/SimulationItem';
 
 const circuit = new Circuit()
-
-const history: Command[] = []
-const undohistory: Command[] = []
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const layerRef = ref<any>(null)
-let layer: Konva.Layer
-onMounted(() => {
-    layer = layerRef.value.getNode()
-})
-const getContextRender = () => {
-    return {
-        layer: layer
-    } as RenderContext
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const stageRef = ref<any>(null)
-let stage: Konva.Stage
-onMounted(() => {
-  stage = stageRef.value!.getNode()
-})
-let draggedGroup: Konva.Group | null = null
-let pointerStart: Konva.Vector2d | null = null
-
+const visualMap = new Map<Konva.Group, SimulationItem>()
 
 const container = ref<HTMLElement | null>(null)
 const width = ref(0);
@@ -49,34 +26,10 @@ onMounted(() =>
     height.value = container.value.clientHeight;
 })
 
-let newItemDeslocation = 0
-const menu = ref({
-    visible: false,
-    x: 0,
-    y: 0
-})
-const openContextMenu = (e: KonvaEventObject<PointerEvent>) => {
-    e.evt.preventDefault()
-    
-    newItemDeslocation = 0
-    menu.value = {
-        visible: true,
-        x: e.evt.clientX,
-        y: e.evt.clientY
-    }
-}
-const closeMenu = () => menu.value.visible = false;
+//#region UNDO/REDO SYSTEM
 
-
-const addInput = () => {
-    const command = new AddInputGateCommand(
-        circuit, getContextRender(),
-        menu.value.x, menu.value.y + newItemDeslocation
-    )
-    newItemDeslocation += 20
-    command.do()
-    history.push(command)
-}
+const history: Command[] = []
+const undohistory: Command[] = []
 
 const undo = () => {
     const command = history.pop()
@@ -98,13 +51,62 @@ const redo = () => {
     history.push(command)
 }
 
+//#endregion
+
+
+//#region LAYER A RENDER CONTEXT SETUP
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const layerRef = ref<any>(null)
+let layer: Konva.Layer
+onMounted(() => {
+    layer = layerRef.value.getNode()
+})
+const getContextRender = () => {
+    return {
+        layer: layer,
+        map: visualMap
+    } as RenderContext
+}
+
+//#endregion
+
+
+//#region CONTEXT MENU SETUP
+
 const handleClick = () => {
     closeMenu()
 }
 
+let newItemDeslocation = 0
+const menu = ref({
+    visible: false,
+    x: 0,
+    y: 0
+})
+const openContextMenu = (e: KonvaEventObject<PointerEvent>) => {
+    e.evt.preventDefault()
+    
+    newItemDeslocation = 0
+    menu.value = {
+        visible: true,
+        x: e.evt.clientX,
+        y: e.evt.clientY
+    }
+}
+const closeMenu = () => menu.value.visible = false;
+
+//#endregion
+
+
+//#region DRAG DROP BEHAVIOUR
+
+let draggedGroup: Konva.Group | null = null
+let pointerStart: Konva.Vector2d | null = null
+
 const handleDrag = (e: Konva.KonvaEventObject<DragEvent>) => {
-    pointerStart = stage.getPointerPosition()
     draggedGroup = e.target as Konva.Group
+    pointerStart = draggedGroup.position()
 };
 
 const handleDrop = () => {
@@ -112,13 +114,18 @@ const handleDrop = () => {
         return
     }
 
-    const pointerEnd = stage.getPointerPosition()
+    const pointerEnd = draggedGroup.position()
     if (pointerEnd === null) {
+        return
+    }
+
+    const simulationItem = visualMap.get(draggedGroup)
+    if (simulationItem === undefined) {
         return
     }
     
     const command = new MoveGateCommand(
-        draggedGroup, pointerStart, pointerEnd
+        simulationItem.getVisualItem(), pointerStart, pointerEnd
     )
     command.do()
     history.push(command)
@@ -126,6 +133,11 @@ const handleDrop = () => {
     pointerStart = null
     draggedGroup = null
 };
+
+//#endregion
+
+
+//#region SHORTCUT KEYS SETUP
 
 const onKeyDown = (e: KeyboardEvent) => {
     const isCtrl = e.ctrlKey || e.metaKey
@@ -146,6 +158,19 @@ const onKeyDown = (e: KeyboardEvent) => {
 onMounted(() => window.addEventListener('keydown', onKeyDown))
 
 onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
+
+//#endregion
+
+
+const addInput = () => {
+    const command = new AddInputGateCommand(
+        circuit, getContextRender(),
+        menu.value.x, menu.value.y + newItemDeslocation
+    )
+    newItemDeslocation += 40
+    command.do()
+    history.push(command)
+}
 
 </script>
 
