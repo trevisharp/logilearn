@@ -21,29 +21,7 @@ export class InputGate implements Gate {
     }
     
     render(ctx: RenderContext): void {
-        this.group = new Konva.Group({
-            x: this.x,
-            y: this.y,
-            draggable: true
-        })
-        
-        this.group.add(new Konva.Circle({ fill: 'white', radius: 10 }))
-        this.group.add(new Konva.Circle({ fill: 'black', radius: 8 }))
-
-        const innercircle = new Konva.Circle({ fill: 'black', radius: 7 })
-        this.group.add(innercircle)
-
-        this.group.addEventListener('click', () => {
-            if (this.state == 1) {
-                this.state = 0
-                innercircle.fill('black')
-            }
-            else {
-                this.state = 1
-                innercircle.fill('white')
-            }
-        })
-
+        this.group = this.buildGroup()
         ctx.layer.add(this.group)
     }
 
@@ -53,5 +31,36 @@ export class InputGate implements Gate {
         }
 
         this.group.destroy()
+    }
+
+    buildGroup(): Konva.Group {
+        if (this.group !== null) {
+            return this.group
+        }
+
+        const group = new Konva.Group({
+            x: this.x,
+            y: this.y,
+            draggable: true
+        })
+        
+        group.add(new Konva.Circle({ fill: 'white', radius: 10 }))
+        group.add(new Konva.Circle({ fill: 'black', radius: 8 }))
+
+        const innercircle = new Konva.Circle({ fill: 'black', radius: 7 })
+        group.add(innercircle)
+
+        group.addEventListener('click', () => {
+            if (this.state == 1) {
+                this.state = 0
+                innercircle.fill('black')
+            }
+            else {
+                this.state = 1
+                innercircle.fill('white')
+            }
+        })
+        
+        return group
     }
 }

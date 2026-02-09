@@ -8,6 +8,7 @@ import type { RenderContext } from '@/simulation/rendering/RenderContext';
 import Konva from 'konva';
 import type { Command } from '@/simulation/commands/Command';
 import { AddInputGateCommand } from '@/simulation/commands/AddInputGateCommand';
+import { MoveGateCommand } from '@/simulation/commands/MoveGateCommand';
 
 const circuit = new Circuit()
 
@@ -25,6 +26,15 @@ const getContextRender = () => {
         layer: layer
     } as RenderContext
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const stageRef = ref<any>(null)
+let stage: Konva.Stage
+onMounted(() => {
+  stage = stageRef.value!.getNode()
+})
+let draggedGroup: Konva.Group | null = null
+let pointerStart: Konva.Vector2d | null = null
 
 
 const container = ref<HTMLElement | null>(null)
@@ -92,12 +102,29 @@ const handleClick = () => {
     closeMenu()
 }
 
-const handleDrag = () => {
-
+const handleDrag = (e: Konva.KonvaEventObject<DragEvent>) => {
+    pointerStart = stage.getPointerPosition()
+    draggedGroup = e.target as Konva.Group
 };
 
 const handleDrop = () => {
+    if (draggedGroup === null || pointerStart === null) {
+        return
+    }
 
+    const pointerEnd = stage.getPointerPosition()
+    if (pointerEnd === null) {
+        return
+    }
+    
+    const command = new MoveGateCommand(
+        draggedGroup, pointerStart, pointerEnd
+    )
+    command.do()
+    history.push(command)
+
+    pointerStart = null
+    draggedGroup = null
 };
 
 const onKeyDown = (e: KeyboardEvent) => {
@@ -124,7 +151,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
 
 <template>
     <div ref="container" class="canva-container">
-        <v-stage
+        <v-stage ref="stageRef"
         @dragstart="handleDrag"
         @dragend="handleDrop"
         @contextmenu="openContextMenu"

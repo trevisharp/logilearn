@@ -4,6 +4,7 @@ import type { RenderContext } from "../rendering/RenderContext";
 import type { Command } from "./Command";
 
 export class AddInputGateCommand implements Command {
+    
     constructor(
         public circuit: Circuit,
         public ctx: RenderContext,
