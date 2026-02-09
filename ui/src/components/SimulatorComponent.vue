@@ -10,6 +10,7 @@ import type { Command } from '@/simulation/commands/Command';
 import { AddInputGateCommand } from '@/simulation/commands/AddInputGateCommand';
 import { MoveGateCommand } from '@/simulation/commands/MoveGateCommand';
 import type { SimulationItem } from '@/simulation/engine/SimulationItem';
+import { AddOutputGateCommand } from '@/simulation/commands/AddOutputGateCommand';
 
 const circuit = new Circuit()
 const visualMap = new Map<Konva.Group, SimulationItem>()
@@ -172,6 +173,17 @@ const addInput = () => {
     history.push(command)
 }
 
+const addOutput = () => {
+    const command = new AddOutputGateCommand(
+        circuit, getContextRender(),
+        menu.value.x, menu.value.y + newItemDeslocation
+    )
+    newItemDeslocation += 40
+    command.do()
+    history.push(command)
+}
+
+
 </script>
 
 <template>
@@ -200,6 +212,7 @@ const addInput = () => {
                     </template>
                     <el-menu-item-group title="Basic Gates" class="item-group">
                         <el-menu-item index="input-gate" class="sub-menu-item" @click="addInput">Input</el-menu-item>
+                        <el-menu-item index="ouput-gate" class="sub-menu-item" @click="addOutput">Output</el-menu-item>
                     </el-menu-item-group>
 
                     <el-menu-item-group title="Logic" class="item-group">

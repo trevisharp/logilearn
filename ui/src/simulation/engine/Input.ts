@@ -14,7 +14,7 @@ export class Input {
         this.onSignalChange?.(this)
     }
 
-    subscribe(func: (o: Input) => void) {
+    subscribe(func: (i: Input) => void) {
         this.onSignalChange = func;
     }
 }
