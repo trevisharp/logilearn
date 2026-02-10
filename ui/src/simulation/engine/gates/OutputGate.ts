@@ -4,6 +4,7 @@ import type { Gate } from "../Gate";
 import { Input } from "../Input";
 import type { Signal } from "../Signal";
 import Konva from "konva";
+import type { Output } from "../Output";
 
 export class OutputGate implements Gate {
     type = "output"
@@ -12,23 +13,24 @@ export class OutputGate implements Gate {
     x: number = 0
     y: number = 0
 
-    inputs = [ new Input() ]
-    outputs = [ ]
+    private input: Input
+    inputs: Input[] = [ ]
+    outputs: Output[] = [ ]
 
     item: VisualItem = { group: null }
     innercircle: Konva.Circle | null = null
+
+    constructor() {
+        this.input = new Input()
+        this.inputs.push(this.input)
+    }
 
     onTick(): void {
         if (this.innercircle === null) {
             return
         }
         
-        const input = this.inputs[0];
-        if (input === undefined) {
-            return
-        }
-
-        this.innercircle.fill(input.state === 1 ? 'white' : 'black')
+        this.innercircle.fill(this.input.state === 1 ? 'white' : 'black')
     }
     
     render(ctx: RenderContext): void {
@@ -43,6 +45,50 @@ export class OutputGate implements Gate {
 
         this.innercircle = new Konva.Circle({ fill: 'black', radius: 7 })
         group.add(this.innercircle)
+
+        group.addEventListener('mouseup', () => {
+            this.x = group.x()
+            this.y = group.y()
+            
+            if (!ctx.connectMode) {
+                return
+            }
+
+            if (ctx.currentWire === null) {
+                return
+            }
+
+            const start = ctx.currentWireGate
+            if (start === null) {
+                return
+            }
+            
+            ctx.currentWire.Sended = this.input
+
+            const line = new Konva.Line({
+                points: [ 0, 0, 100, 100],
+                stroke: '#999',
+                strokeWidth: 2
+            })
+
+            const startGroup = start?.getVisualItem().group
+            if (startGroup !== null && startGroup !== undefined) {
+                startGroup.on('mouseup', () => {
+                    line.points([ start.x, start.y, this.x, this.y ])
+                })
+            }
+
+            const endGroup = this?.getVisualItem().group
+            if (endGroup !== null && startGroup !== undefined) {
+                endGroup.on('mouseup', () => {
+                    line.points([ start.x, start.y, this.x, this.y ])
+                })
+            }
+            ctx.layer.add(line)
+
+            ctx.currentWire = null
+            ctx.currentWireGate = null
+        })
 
         this.item.group = group
 
