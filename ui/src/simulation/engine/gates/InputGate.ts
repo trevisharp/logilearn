@@ -4,7 +4,7 @@ import { Output } from "../Output";
 import type { Signal } from "../Signal";
 import Konva from "konva";
 import type { VisualItem } from "@/simulation/rendering/VisualItem";
-import { Wire } from "../Wire";
+import type { Input } from "../Input";
 
 export class InputGate implements Gate {
     type = "input"
@@ -13,13 +13,19 @@ export class InputGate implements Gate {
     x: number = 0
     y: number = 0
 
-    inputs = []
-    outputs = [ new Output() ]
+    inputs: Input[] = []
+    outputs: Output[] = []
+
+    private output: Output
+    constructor() {
+        this.output = new Output()
+        this.outputs.push(this.output)
+    }
 
     item: VisualItem = { group: null }
 
     onTick(): void {
-        this.outputs[0]?.sendSignal(this.state)
+        this.output.sendSignal(this.state)
     }
 
     getVisualItem(): VisualItem {
@@ -39,27 +45,12 @@ export class InputGate implements Gate {
         const innercircle = new Konva.Circle({ fill: 'black', radius: 7 })
         group.add(innercircle)
 
-        group.addEventListener('mousedown', () => {
-            if (!ctx.connectMode) {
-                return
-            }
-
-            const output = this.outputs[0]
-            if (output === undefined) {
-                return
-            }
-            ctx.currentWire = new Wire(output)
-            ctx.currentWireGate = this
+        group.on('xChange', () => {
+            this.x = group.x()
         })
 
-        group.addEventListener('mouseup', () => {
-            this.x = group.x()
+        group.on('yChange', () => {
             this.y = group.y()
-            
-            if (!ctx.connectMode) {
-                return
-            }
-            ctx.currentWire = null
         })
 
         group.addEventListener('click', () => {
@@ -86,5 +77,13 @@ export class InputGate implements Gate {
         ctx.map.delete(this.item.group)
         this.item.group.destroy()
         this.item.group = null
+    }
+    
+    getBestInput(): Input | null {
+        return null
+    }
+    
+    getBestOutput(): Output | null {
+        return this.output
     }
 }

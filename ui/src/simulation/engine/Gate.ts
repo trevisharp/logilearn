@@ -11,6 +11,9 @@ export interface Gate extends SimulationItem {
     outputs: Output[]
     
     onTick(dt: number): void
+
+    getBestInput(x: number, y: number): Input | null
+    getBestOutput(x: number, y: number): Output | null
     
     render(ctx: RenderContext): void
     unrender(ctx: RenderContext): void

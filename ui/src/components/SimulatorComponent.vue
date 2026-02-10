@@ -11,6 +11,7 @@ import { AddInputGateCommand } from '@/simulation/commands/AddInputGateCommand';
 import { MoveGateCommand } from '@/simulation/commands/MoveGateCommand';
 import type { SimulationItem } from '@/simulation/engine/SimulationItem';
 import { AddOutputGateCommand } from '@/simulation/commands/AddOutputGateCommand';
+import { ConnectGateCommand } from '@/simulation/commands/ConnectGateCommand';
 
 const circuit = new Circuit()
 const visualMap = new Map<Konva.Group, SimulationItem>()
@@ -216,6 +217,65 @@ const disableconnect = () => {
     getContextRender().connectMode = false
 }
 
+const findClosest = (x: number, y: number) => {
+
+    let closest = circuit.gates[0]
+    if (closest === undefined) {
+        return
+    }
+    let dist = 
+        (closest.x - x) * (closest.x - x) + 
+        (closest.y - y) * (closest.y - y)
+
+    circuit.gates.forEach(gate => {
+        const dx = gate.x - x
+        const dy = gate.y - y
+        const newdist = dx * dx + dy * dy
+        if (newdist < dist) {
+            dist = newdist
+            closest = gate
+        }
+    });
+
+    return closest
+}
+
+const mousedownConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
+    
+    if (!ctx.value?.connectMode) {
+        return
+    }
+
+    const closest = findClosest(e.evt.x, e.evt.y)
+    if (closest === undefined) {
+        return
+    }
+
+    ctx.value.currentWireGate = closest
+}
+
+const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
+    
+    if (!ctx.value?.connectMode) {
+        return
+    }
+
+    if (ctx.value.currentWireGate === null) {
+        return
+    }
+
+    const closest = findClosest(e.evt.x, e.evt.y)
+    if (closest === undefined) {
+        return
+    }
+
+    const command = new ConnectGateCommand(
+        ctx.value.currentWireGate, closest, ctx.value
+    )
+    command.do()
+    history.push(command)
+}
+
 </script>
 
 <template>
@@ -225,6 +285,8 @@ const disableconnect = () => {
     @dragend="handleDrop"
     @contextmenu="openContextMenu"
     @click="handleClick"
+    @mousedown="mousedownConnectLogic"
+    @mouseup="mouseupConnectLogic"
     :config="{ width: width, height: height }">
         <v-layer ref="layerRef"></v-layer>
     </v-stage>

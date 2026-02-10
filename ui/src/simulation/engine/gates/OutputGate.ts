@@ -46,48 +46,12 @@ export class OutputGate implements Gate {
         this.innercircle = new Konva.Circle({ fill: 'black', radius: 7 })
         group.add(this.innercircle)
 
-        group.addEventListener('mouseup', () => {
+        group.on('xChange', () => {
             this.x = group.x()
+        })
+
+        group.on('yChange', () => {
             this.y = group.y()
-            
-            if (!ctx.connectMode) {
-                return
-            }
-
-            if (ctx.currentWire === null) {
-                return
-            }
-
-            const start = ctx.currentWireGate
-            if (start === null) {
-                return
-            }
-            
-            ctx.currentWire.Sended = this.input
-
-            const line = new Konva.Line({
-                points: [ 0, 0, 100, 100],
-                stroke: '#999',
-                strokeWidth: 2
-            })
-
-            const startGroup = start?.getVisualItem().group
-            if (startGroup !== null && startGroup !== undefined) {
-                startGroup.on('mouseup', () => {
-                    line.points([ start.x, start.y, this.x, this.y ])
-                })
-            }
-
-            const endGroup = this?.getVisualItem().group
-            if (endGroup !== null && startGroup !== undefined) {
-                endGroup.on('mouseup', () => {
-                    line.points([ start.x, start.y, this.x, this.y ])
-                })
-            }
-            ctx.layer.add(line)
-
-            ctx.currentWire = null
-            ctx.currentWireGate = null
         })
 
         this.item.group = group
@@ -110,4 +74,12 @@ export class OutputGate implements Gate {
         return this.item
     }
 
+    
+    getBestInput(): Input | null {
+        return this.input
+    }
+    
+    getBestOutput(): Output | null {
+        return null
+    }
 }
