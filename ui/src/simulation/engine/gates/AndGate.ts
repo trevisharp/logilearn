@@ -21,6 +21,10 @@ export class AndGate implements Gate {
     output = new Output()
     item: VisualItem = { group: null }
 
+    visualInputA: Konva.Circle | null = null
+    visualInputB: Konva.Circle | null = null
+    visualOutput: Konva.Circle | null = null
+
     inputs: Input[] = []
     outputs: Output[] = []
 
@@ -35,8 +39,6 @@ export class AndGate implements Gate {
         this.output.y += this.height / 2
 
         const updateState = () => {
-            console.log(this.inputA)
-            console.log(this.inputB)
             if (this.inputA.state == 1 && this.inputB.state == 1) {
                 this.state = 1
                 return
@@ -53,6 +55,37 @@ export class AndGate implements Gate {
         this.inputA.subscribe(updateState)
         this.inputB.subscribe(updateState)
     }
+    
+    showBestInput(x: number, y: number): void {
+        const best = this.getBestInput(x, y)
+        if (best === null)
+            return
+        
+        if (this.inputA == best)
+        {
+            this.visualInputA?.fill("yellow")
+            this.visualInputB?.fill("red")
+        }
+        else
+        {
+            this.visualInputB?.fill("yellow")
+            this.visualInputA?.fill("red")
+        }
+    }
+
+    hideBestInput(): void {
+        this.visualInputA?.fill("red")
+        this.visualInputB?.fill("red")
+    }
+
+    showBestOutput(): void {
+        this.visualOutput?.fill("yellow")
+    }
+
+    hideBestOutput(): void {
+        this.visualOutput?.fill("red")
+    }
+
 
     onTick(): void {
         if (this.output.state != this.state)
@@ -60,8 +93,8 @@ export class AndGate implements Gate {
     }
 
     getBestInput(x: number, y: number): Input | null {
-        if (y - this.y < this.height / 2)
-            return this.inputA.connected ? null : this.inputA
+        if (y - this.y < this.height / 2 && !this.inputA.connected)
+            return this.inputA
 
         return this.inputB.connected ? null : this.inputB
     }
@@ -105,7 +138,7 @@ export class AndGate implements Gate {
             strokeWidth: 2
         })
 
-        const input1 = new Konva.Circle({
+        this.visualInputA = new Konva.Circle({
             x: 0,
             y: height * 0.2,
             radius: 4,
@@ -113,7 +146,7 @@ export class AndGate implements Gate {
             name: "input"
         })
 
-        const input2 = new Konva.Circle({
+        this.visualInputB = new Konva.Circle({
             x: 0,
             y: height * 0.8,
             radius: 4,
@@ -121,7 +154,7 @@ export class AndGate implements Gate {
             name: "input"
         })
 
-        const output = new Konva.Circle({
+        this.visualOutput = new Konva.Circle({
             x: width - 2,
             y: height / 2,
             radius: 4,
@@ -130,9 +163,9 @@ export class AndGate implements Gate {
         })
 
         group.add(body)
-        group.add(input1)
-        group.add(input2)
-        group.add(output)
+        group.add(this.visualInputA)
+        group.add(this.visualInputB)
+        group.add(this.visualOutput)
 
         this.item.group = group
 

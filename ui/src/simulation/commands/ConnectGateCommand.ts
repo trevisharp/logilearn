@@ -3,10 +3,12 @@ import type { Gate } from "../engine/Gate";
 import type { RenderContext } from "../rendering/RenderContext";
 import type { Command } from "./Command";
 import { Wire } from "../engine/Wire";
+import type { Input } from "../engine/Input";
 
 export class ConnectGateCommand implements Command {
 
     private wire: Wire | null = null
+    private input: Input | null = null
 
     constructor(
         public startGate: Gate,
@@ -26,6 +28,9 @@ export class ConnectGateCommand implements Command {
         if (output === null || input === null) {
             return false
         }
+
+        this.input = input
+        input.connected = true
 
         this.wire = new Wire(output)
         this.wire.Sended = input
@@ -73,6 +78,10 @@ export class ConnectGateCommand implements Command {
     }
 
     undo(): void {
+        if (this.input !== null)
+            this.input.connected = false
+
+        this.input = null
         this.wire?.remove()
         this.wire?.getVisualItem().group?.destroy()
     }

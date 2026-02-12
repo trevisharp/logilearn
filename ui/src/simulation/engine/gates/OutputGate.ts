@@ -20,13 +20,25 @@ export class OutputGate implements Gate {
     item: VisualItem = { group: null }
     innercircle: Konva.Circle | null = null
 
+    visualInput = new Konva.Circle({ fill: 'black', radius: 8 })
+
     constructor() {
         this.input = new Input()
         this.inputs.push(this.input)
 
-        this.input.x += 10
+        this.input.x += 10 / 2
         this.input.y += 10 / 2
     }
+
+    showBestInput(): void {
+        this.visualInput.fill('yellow')
+    }
+    hideBestInput(): void {
+        this.visualInput.fill('black')
+    }
+
+    showBestOutput(): void { }
+    hideBestOutput(): void { }
 
     onTick(): void {
         if (this.innercircle === null) {
@@ -44,7 +56,8 @@ export class OutputGate implements Gate {
         })
         
         group.add(new Konva.Circle({ fill: 'white', radius: 10 }))
-        group.add(new Konva.Circle({ fill: 'black', radius: 8 }))
+        this.visualInput = new Konva.Circle({ fill: 'black', radius: 8 })
+        group.add(this.visualInput)
 
         this.innercircle = new Konva.Circle({ fill: 'black', radius: 7 })
         group.add(this.innercircle)

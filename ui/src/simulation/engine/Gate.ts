@@ -14,6 +14,12 @@ export interface Gate extends SimulationItem {
 
     getBestInput(x: number, y: number): Input | null
     getBestOutput(x: number, y: number): Output | null
+
+    showBestInput(x: number, y: number): void
+    hideBestInput(): void
+
+    showBestOutput(x: number, y: number): void
+    hideBestOutput(): void
     
     render(ctx: RenderContext): void
     unrender(ctx: RenderContext): void

@@ -13,13 +13,12 @@ import type { SimulationItem } from '@/simulation/engine/SimulationItem';
 import { AddOutputGateCommand } from '@/simulation/commands/AddOutputGateCommand';
 import { ConnectGateCommand } from '@/simulation/commands/ConnectGateCommand';
 import { AddAndGateCommand } from '@/simulation/commands/AddAndGateCommand';
+import type { Gate } from '@/simulation/engine/Gate';
 
 const circuit = new Circuit()
 const visualMap = new Map<Konva.Group, SimulationItem>()
 
-setInterval(() => {
-    circuit.onTick(0.02)
-}, 20);
+setInterval(() => circuit.onTick(0.02), 20);
 
 const container = ref<HTMLElement | null>(null)
 const width = ref(0);
@@ -196,6 +195,9 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
 
 //#endregion
 
+
+//#region ADD GATE SYSTEM
+
 const addInput = () => {
     const command = new AddInputGateCommand(
         circuit, getContextRender(),
@@ -226,12 +228,19 @@ const addAndGate = () => {
         history.push(command)
 }
 
+//#endregion
+
+
+//#region CONNECT GATES SYSTEM
+
 const connect = () => {
     getContextRender().connectMode = true
 }
 
 const disableconnect = () => {
     getContextRender().connectMode = false
+    bestInputClosest?.hideBestInput()
+    bestOutputClosest?.hideBestOutput()
 }
 
 const findClosest = (x: number, y: number) => {
@@ -259,9 +268,20 @@ const findClosest = (x: number, y: number) => {
 
 const mousedownConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
     
+    if (e.target.getClassName() !== "Stage") {
+        return
+    }
+    
     if (!ctx.value?.connectMode) {
         return
     }
+
+    line = new Konva.Line({
+        points: [ e.evt.layerX, e.evt.layerY, e.evt.layerX, e.evt.layerY ],
+        stroke: '#999',
+        strokeWidth: 2
+    })
+    layer.add(line)
     
     const closest = findClosest(e.evt.layerX, e.evt.layerY)
     if (closest === undefined) {
@@ -273,11 +293,60 @@ const mousedownConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
     ctx.value.connectInfo.currentWireGate = closest
 }
 
+let bestOutputClosest: Gate | undefined
+let bestInputClosest: Gate | undefined
+const showBestOutput = (e: KonvaEventObject<PointerEvent>) => {
+    bestOutputClosest?.hideBestOutput()
+
+    bestOutputClosest = findClosest(e.evt.layerX, e.evt.layerY)
+    if (bestOutputClosest === undefined) {
+        return
+    }
+
+    bestOutputClosest.showBestOutput(e.evt.layerX, e.evt.layerY)
+}
+
+
+const showBestInput = (e: KonvaEventObject<PointerEvent>) => {
+    bestInputClosest?.hideBestInput()
+
+    bestInputClosest = findClosest(e.evt.layerX, e.evt.layerY)
+    if (bestInputClosest === undefined) {
+        return
+    }
+
+    bestInputClosest.showBestInput(e.evt.layerX, e.evt.layerY)
+}
+
+let line = new Konva.Line({})
+const mousemoveConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
+
+    if (!ctx.value?.connectMode) {
+        return
+    }
+
+    const pts = line.points()
+    if (!pts[0] || !pts[1]) {
+        showBestOutput(e)
+        return
+    }
+
+    showBestInput(e)
+
+    line.points([ 
+        pts[0], pts[1],
+        e.evt.layerX, e.evt.layerY
+    ])
+}
+
 const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
     
     if (!ctx.value?.connectMode) {
         return
     }
+
+    line.destroy()
+    line = new Konva.Line({})
 
     if (ctx.value.connectInfo.currentWireGate === null) {
         return
@@ -287,6 +356,7 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
     if (closest === undefined) {
         return
     }
+    closest.hideBestInput()
     ctx.value.connectInfo.finalX = e.evt.layerX
     ctx.value.connectInfo.finalY = e.evt.layerY
 
@@ -297,6 +367,8 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
         history.push(command)
 }
 
+//#endregion
+
 </script>
 
 <template>
@@ -306,6 +378,7 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
     @dragend="handleDrop"
     @contextmenu="openContextMenu"
     @click="handleClick"
+    @mousemove="mousemoveConnectLogic"
     @mousedown="mousedownConnectLogic"
     @mouseup="mouseupConnectLogic"
     :config="{ width: width, height: height }">
