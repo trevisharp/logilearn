@@ -349,6 +349,10 @@ const showBestInput = (e: KonvaEventObject<PointerEvent>) => {
 let line = new Konva.Line({})
 const mousemoveConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
 
+    if (e.target.getClassName() !== "Stage") {
+        return
+    }
+
     if (!ctx.value?.connectMode) {
         return
     }
@@ -368,6 +372,10 @@ const mousemoveConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
 }
 
 const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
+    
+    if (e.target.getClassName() !== "Stage") {
+        return
+    }
     
     if (!ctx.value?.connectMode) {
         return

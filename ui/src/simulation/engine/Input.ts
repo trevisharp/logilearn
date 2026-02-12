@@ -6,7 +6,7 @@ export class Input {
     connected = false
     
     constructor(public tilte: string | null = null) { }
-    state: Signal = null
+    state: Signal = 0
     private onSignalChange?: (input: Input) => void
 
     reciveSignal(newState: Signal) {

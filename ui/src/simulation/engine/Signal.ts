@@ -1,1 +1,1 @@
-export type Signal = 0 | 1 | null
+export type Signal = 0 | 1

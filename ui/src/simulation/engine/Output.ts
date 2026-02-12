@@ -5,7 +5,7 @@ export class Output {
     y = 0
 
     constructor(public tilte: string | null = null) { }
-    state: Signal = null
+    state: Signal = 0
     private onSignalChange: ((output: Output) => void)[] = []
 
     sendSignal(newState: Signal) {

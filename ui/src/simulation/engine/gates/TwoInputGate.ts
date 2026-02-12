@@ -35,7 +35,7 @@ export class TwoInputGate implements Gate {
     y: number = 0
     type: string = ''
 
-    state: Signal = null
+    state: Signal = 0
     inputA = new Input()
     inputB = new Input()
     output = new Output()
@@ -80,8 +80,7 @@ export class TwoInputGate implements Gate {
 
 
     onTick(): void {
-        if (this.output.state != this.state)
-            this.output.sendSignal(this.state)
+        this.output.sendSignal(this.state)
     }
 
     getBestInput(x: number, y: number): Input | null {

@@ -11,11 +11,7 @@ export class OrGate extends TwoInputGate {
                     return 1
                 }
 
-                if (a != null || b != null) {
-                    return 0
-                }
-
-                return null
+                return 0
             },
             (width, height) => {
                 return new Konva.Shape({

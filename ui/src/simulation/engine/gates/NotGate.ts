@@ -26,7 +26,7 @@ export class NotGate implements Gate {
     y: number = 0
     type: string = 'not'
 
-    state: Signal = null
+    state: Signal = 1
     input = new Input()
     output = new Output()
     item: VisualItem = { group: null }
@@ -53,10 +53,8 @@ export class NotGate implements Gate {
         this.visualOutput?.fill("red")
     }
 
-
     onTick(): void {
-        if (this.output.state != this.state)
-            this.output.sendSignal(this.state)
+        this.output.sendSignal(this.state)
     }
 
     getBestInput(): Input | null {
