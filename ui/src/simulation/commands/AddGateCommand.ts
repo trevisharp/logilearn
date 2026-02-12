@@ -1,16 +1,16 @@
-import type { Circuit } from "../engine/Circuit"
-import { OrGate } from "../engine/gates/OrGate"
-import type { RenderContext } from "../rendering/RenderContext"
+import type { Circuit } from "../engine/Circuit";
+import type { Gate } from "../engine/Gate";
+import type { RenderContext } from "../rendering/RenderContext";
 
-export class AddOrGateCommand {
+export class AddGateCommand<T extends Gate> {
+
     constructor(
+        public gate: T,
         public circuit: Circuit,
         public ctx: RenderContext,
         public x: number,
         public y: number) 
         { }
-
-    gate: OrGate = new OrGate()
     
     do(): boolean {
         this.gate.x = this.x

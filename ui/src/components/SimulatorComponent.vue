@@ -7,14 +7,16 @@ import { Circuit } from '@/simulation/engine/Circuit';
 import type { RenderContext } from '@/simulation/rendering/RenderContext';
 import Konva from 'konva';
 import type { Command } from '@/simulation/commands/Command';
-import { AddInputGateCommand } from '@/simulation/commands/AddInputGateCommand';
 import { MoveGateCommand } from '@/simulation/commands/MoveGateCommand';
 import type { SimulationItem } from '@/simulation/engine/SimulationItem';
-import { AddOutputGateCommand } from '@/simulation/commands/AddOutputGateCommand';
 import { ConnectGateCommand } from '@/simulation/commands/ConnectGateCommand';
-import { AddAndGateCommand } from '@/simulation/commands/AddAndGateCommand';
 import type { Gate } from '@/simulation/engine/Gate';
-import { AddOrGateCommand } from '@/simulation/commands/AddOrGateCommand';
+import { AddGateCommand } from '@/simulation/commands/AddGateCommand';
+import { NotGate } from '@/simulation/engine/gates/NotGate';
+import { OutputGate } from '@/simulation/engine/gates/OutputGate';
+import { InputGate } from '@/simulation/engine/gates/InputGate';
+import { AndGate } from '@/simulation/engine/gates/AndGate';
+import { OrGate } from '@/simulation/engine/gates/OrGate';
 
 const circuit = new Circuit()
 const visualMap = new Map<Konva.Group, SimulationItem>()
@@ -200,7 +202,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
 //#region ADD GATE SYSTEM
 
 const addInput = () => {
-    const command = new AddInputGateCommand(
+    const command = new AddGateCommand(
+        new InputGate(),
         circuit, getContextRender(),
         menu.value.x, menu.value.y + newItemDeslocation
     )
@@ -210,7 +213,19 @@ const addInput = () => {
 }
 
 const addOutput = () => {
-    const command = new AddOutputGateCommand(
+    const command = new AddGateCommand(
+        new OutputGate(),
+        circuit, getContextRender(),
+        menu.value.x, menu.value.y + newItemDeslocation
+    )
+    newItemDeslocation += 40
+    if (command.do())
+        history.push(command)
+}
+
+const addNotGate = () => {
+    const command = new AddGateCommand(
+        new NotGate(),
         circuit, getContextRender(),
         menu.value.x, menu.value.y + newItemDeslocation
     )
@@ -220,7 +235,8 @@ const addOutput = () => {
 }
 
 const addAndGate = () => {
-    const command = new AddAndGateCommand(
+    const command = new AddGateCommand(
+        new AndGate(),
         circuit, getContextRender(),
         menu.value.x, menu.value.y + newItemDeslocation
     )
@@ -230,7 +246,8 @@ const addAndGate = () => {
 }
 
 const addOrGate = () => {
-    const command = new AddOrGateCommand(
+    const command = new AddGateCommand(
+        new OrGate(),
         circuit, getContextRender(),
         menu.value.x, menu.value.y + newItemDeslocation
     )
@@ -421,7 +438,7 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
                 <el-menu-item-group title="Logic" class="item-group">
                     <el-menu-item index="or-gate" class="sub-menu-item" @click="addOrGate">Or Gate</el-menu-item>
                     <el-menu-item index="and-gate" class="sub-menu-item" @click="addAndGate">And Gate</el-menu-item>
-                    <el-menu-item index="not-gate" class="sub-menu-item">Not Gate</el-menu-item>
+                    <el-menu-item index="not-gate" class="sub-menu-item" @click="addNotGate">Not Gate</el-menu-item>
                 </el-menu-item-group>
             </el-sub-menu>
 
