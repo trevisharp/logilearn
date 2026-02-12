@@ -1,16 +1,17 @@
 import Konva from "konva";
 import { TwoInputGate } from "./TwoInputGate";
 
-export class AndGate extends TwoInputGate {
+export class OrGate extends TwoInputGate {
+
     constructor() {
 
-        super('and', 
+        super('or', 
             (a, b) => {
-                if (a == 1 && b == 1) {
+                if (a == 1 || b == 1) {
                     return 1
                 }
 
-                if (a != null && b != null) {
+                if (a != null || b != null) {
                     return 0
                 }
 
@@ -24,8 +25,9 @@ export class AndGate extends TwoInputGate {
                         ctx.lineTo(width / 2, 0)
                         ctx.arc(width / 2, height / 2, height / 2, -Math.PI / 2, Math.PI / 2)
                         ctx.lineTo(0, height)
+                        ctx.arc(0, height / 2, height / 3, Math.PI / 2, -Math.PI / 2, true)
                         ctx.closePath()
-
+        
                         ctx.fillStrokeShape(shape)
                     },
                     fill: "#e0e0e0",

@@ -12,24 +12,24 @@ export class AddOutputGateCommand implements Command {
         public y: number) 
         { }
 
-    outputGate: OutputGate = new OutputGate()
+    gate: OutputGate = new OutputGate()
     
     do(): boolean {
-        this.outputGate.x = this.x
-        this.outputGate.y = this.y
+        this.gate.x = this.x
+        this.gate.y = this.y
 
-        this.circuit.gates.push(this.outputGate)
+        this.circuit.gates.push(this.gate)
 
-        this.outputGate.render(this.ctx)
+        this.gate.render(this.ctx)
 
         return true
     }
 
     undo(): void {
-        if (this.outputGate === null) {
+        if (this.gate === null) {
             return
         }
-        this.circuit.gates = this.circuit.gates.filter(g => g !== this.outputGate)
-        this.outputGate.unrender(this.ctx)
+        this.circuit.gates = this.circuit.gates.filter(g => g !== this.gate)
+        this.gate.unrender(this.ctx)
     }
 }

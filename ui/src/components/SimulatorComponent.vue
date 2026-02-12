@@ -14,6 +14,7 @@ import { AddOutputGateCommand } from '@/simulation/commands/AddOutputGateCommand
 import { ConnectGateCommand } from '@/simulation/commands/ConnectGateCommand';
 import { AddAndGateCommand } from '@/simulation/commands/AddAndGateCommand';
 import type { Gate } from '@/simulation/engine/Gate';
+import { AddOrGateCommand } from '@/simulation/commands/AddOrGateCommand';
 
 const circuit = new Circuit()
 const visualMap = new Map<Konva.Group, SimulationItem>()
@@ -228,6 +229,16 @@ const addAndGate = () => {
         history.push(command)
 }
 
+const addOrGate = () => {
+    const command = new AddOrGateCommand(
+        circuit, getContextRender(),
+        menu.value.x, menu.value.y + newItemDeslocation
+    )
+    newItemDeslocation += 40
+    if (command.do())
+        history.push(command)
+}
+
 //#endregion
 
 
@@ -408,7 +419,7 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
                 </el-menu-item-group>
 
                 <el-menu-item-group title="Logic" class="item-group">
-                    <el-menu-item index="or-gate" class="sub-menu-item">Or Gate</el-menu-item>
+                    <el-menu-item index="or-gate" class="sub-menu-item" @click="addOrGate">Or Gate</el-menu-item>
                     <el-menu-item index="and-gate" class="sub-menu-item" @click="addAndGate">And Gate</el-menu-item>
                     <el-menu-item index="not-gate" class="sub-menu-item">Not Gate</el-menu-item>
                 </el-menu-item-group>

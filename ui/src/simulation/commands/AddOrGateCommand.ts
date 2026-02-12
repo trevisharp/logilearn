@@ -1,10 +1,8 @@
-import type { Circuit } from "../engine/Circuit";
-import { InputGate } from "../engine/gates/InputGate";
-import type { RenderContext } from "../rendering/RenderContext";
-import type { Command } from "./Command";
+import type { Circuit } from "../engine/Circuit"
+import { OrGate } from "../engine/gates/OrGate"
+import type { RenderContext } from "../rendering/RenderContext"
 
-export class AddInputGateCommand implements Command {
-    
+export class AddOrGateCommand {
     constructor(
         public circuit: Circuit,
         public ctx: RenderContext,
@@ -12,7 +10,7 @@ export class AddInputGateCommand implements Command {
         public y: number) 
         { }
 
-    gate: InputGate = new InputGate()
+    gate: OrGate = new OrGate()
     
     do(): boolean {
         this.gate.x = this.x
@@ -32,4 +30,5 @@ export class AddInputGateCommand implements Command {
         this.circuit.gates = this.circuit.gates.filter(g => g !== this.gate)
         this.gate.unrender(this.ctx)
     }
+
 }

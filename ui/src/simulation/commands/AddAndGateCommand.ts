@@ -10,25 +10,25 @@ export class AddAndGateCommand {
         public y: number) 
         { }
 
-    inputGate: AndGate = new AndGate()
+    gate: AndGate = new AndGate()
     
     do(): boolean {
-        this.inputGate.x = this.x
-        this.inputGate.y = this.y
+        this.gate.x = this.x
+        this.gate.y = this.y
 
-        this.circuit.gates.push(this.inputGate)
+        this.circuit.gates.push(this.gate)
 
-        this.inputGate.render(this.ctx)
+        this.gate.render(this.ctx)
 
         return true
     }
 
     undo(): void {
-        if (this.inputGate === null) {
+        if (this.gate === null) {
             return
         }
-        this.circuit.gates = this.circuit.gates.filter(g => g !== this.inputGate)
-        this.inputGate.unrender(this.ctx)
+        this.circuit.gates = this.circuit.gates.filter(g => g !== this.gate)
+        this.gate.unrender(this.ctx)
     }
 
 }
