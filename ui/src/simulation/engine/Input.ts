@@ -1,7 +1,9 @@
 import type { Signal } from "./Signal"
 
 export class Input {
-
+    x = 0
+    y = 0
+    
     constructor(public tilte: string | null = null) { }
     state: Signal = null
     private onSignalChange?: (input: Input) => void

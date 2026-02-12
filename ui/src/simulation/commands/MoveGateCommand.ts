@@ -10,11 +10,13 @@ export class MoveGateCommand implements Command {
         public end: Konva.Vector2d)
         { }
 
-    do(): void {
+    do(): boolean {
         if (this.item.group === null) {
-            return
+            return false
         }
         this.item.group.position(this.end)
+
+        return true
     }
 
     undo(): void {

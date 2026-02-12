@@ -7,6 +7,12 @@ export interface RenderContext {
     layer: Konva.Layer,
     map: Map<Konva.Group, SimulationItem>,
     connectMode: boolean,
-    currentWire: Wire | null,
-    currentWireGate: Gate | null
+    connectInfo: {
+        currentWire: Wire | null,
+        currentWireGate: Gate | null,
+        startX: number,
+        startY: number,
+        finalX: number,
+        finalY: number
+    }
 }

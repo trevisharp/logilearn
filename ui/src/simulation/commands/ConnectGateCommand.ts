@@ -14,11 +14,17 @@ export class ConnectGateCommand implements Command {
         public ctx: RenderContext
     ) { }
 
-    do(): void {
-        const output = this.startGate.outputs[0]
-        const input = this.endGate.inputs[0]
-        if (output === undefined || input === undefined) {
-            return
+    do(): boolean {
+        const output = this.startGate.getBestOutput(
+            this.ctx.connectInfo.startX,
+            this.ctx.connectInfo.startY
+        )
+        const input = this.endGate.getBestInput(
+            this.ctx.connectInfo.finalX,
+            this.ctx.connectInfo.finalY
+        )
+        if (output === null || input === null) {
+            return false
         }
 
         this.wire = new Wire(output)
@@ -27,7 +33,12 @@ export class ConnectGateCommand implements Command {
         const group = new Konva.Group()
         
         const line = new Konva.Line({
-            points: [ this.startGate.x, this.startGate.y, this.endGate.x, this.endGate.y ],
+            points: [ 
+                this.startGate.x + output.x, 
+                this.startGate.y + output.y,
+                this.endGate.x + input.x,
+                this.endGate.y + input.y
+            ],
             stroke: '#999',
             strokeWidth: 2
         })
@@ -35,7 +46,12 @@ export class ConnectGateCommand implements Command {
         group.add(line)
 
         const updateLine = () => {
-            line.points([ this.startGate.x, this.startGate.y, this.endGate.x, this.endGate.y ])
+            line.points([ 
+                this.startGate.x + output.x, 
+                this.startGate.y + output.y,
+                this.endGate.x + input.x,
+                this.endGate.y + input.y
+            ])
         }
 
         const startGroup = this.startGate?.getVisualItem().group
@@ -51,7 +67,9 @@ export class ConnectGateCommand implements Command {
         }
         
         this.ctx.layer.add(group)
-        this.wire.getVisualItem().group = group  
+        this.wire.getVisualItem().group = group
+
+        return true
     }
 
     undo(): void {

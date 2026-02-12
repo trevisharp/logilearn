@@ -23,6 +23,9 @@ export class OutputGate implements Gate {
     constructor() {
         this.input = new Input()
         this.inputs.push(this.input)
+
+        this.input.x += 10
+        this.input.y += 10 / 2
     }
 
     onTick(): void {

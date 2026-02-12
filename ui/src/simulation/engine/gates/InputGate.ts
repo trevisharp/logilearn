@@ -20,6 +20,9 @@ export class InputGate implements Gate {
     constructor() {
         this.output = new Output()
         this.outputs.push(this.output)
+
+        this.output.x += 10
+        this.output.y += 10 / 2
     }
 
     item: VisualItem = { group: null }

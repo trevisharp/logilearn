@@ -14,13 +14,15 @@ export class AddOutputGateCommand implements Command {
 
     outputGate: OutputGate = new OutputGate()
     
-    do(): void {
+    do(): boolean {
         this.outputGate.x = this.x
         this.outputGate.y = this.y
 
         this.circuit.gates.push(this.outputGate)
 
         this.outputGate.render(this.ctx)
+
+        return true
     }
 
     undo(): void {

@@ -1,6 +1,8 @@
 import type { Signal } from "./Signal"
 
 export class Output {
+    x = 0
+    y = 0
 
     constructor(public tilte: string | null = null) { }
     state: Signal = null

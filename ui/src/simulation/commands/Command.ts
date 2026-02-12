@@ -1,4 +1,4 @@
 export interface Command {
-    do(): void
+    do(): boolean
     undo(): void
 }

@@ -12,6 +12,7 @@ import { MoveGateCommand } from '@/simulation/commands/MoveGateCommand';
 import type { SimulationItem } from '@/simulation/engine/SimulationItem';
 import { AddOutputGateCommand } from '@/simulation/commands/AddOutputGateCommand';
 import { ConnectGateCommand } from '@/simulation/commands/ConnectGateCommand';
+import { AddAndGateCommand } from '@/simulation/commands/AddAndGateCommand';
 
 const circuit = new Circuit()
 const visualMap = new Map<Konva.Group, SimulationItem>()
@@ -73,8 +74,14 @@ onMounted(() => {
         layer: layer,
         map: visualMap,
         connectMode: false,
-        currentWire: null,
-        currentWireGate: null
+        connectInfo: {
+            currentWire: null,
+            currentWireGate: null,
+            startX: 0,
+            startY: 0,
+            finalX: 0,
+            finalY: 0
+        }
     }
 })
 const getContextRender = () => {
@@ -146,8 +153,8 @@ const handleDrop = () => {
     const command = new MoveGateCommand(
         simulationItem.getVisualItem(), pointerStart, pointerEnd
     )
-    command.do()
-    history.push(command)
+    if (command.do())
+        history.push(command)
 
     pointerStart = null
     draggedGroup = null
@@ -195,8 +202,8 @@ const addInput = () => {
         menu.value.x, menu.value.y + newItemDeslocation
     )
     newItemDeslocation += 40
-    command.do()
-    history.push(command)
+    if (command.do())
+        history.push(command)
 }
 
 const addOutput = () => {
@@ -205,8 +212,18 @@ const addOutput = () => {
         menu.value.x, menu.value.y + newItemDeslocation
     )
     newItemDeslocation += 40
-    command.do()
-    history.push(command)
+    if (command.do())
+        history.push(command)
+}
+
+const addAndGate = () => {
+    const command = new AddAndGateCommand(
+        circuit, getContextRender(),
+        menu.value.x, menu.value.y + newItemDeslocation
+    )
+    newItemDeslocation += 40
+    if (command.do())
+        history.push(command)
 }
 
 const connect = () => {
@@ -245,13 +262,15 @@ const mousedownConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
     if (!ctx.value?.connectMode) {
         return
     }
-
-    const closest = findClosest(e.evt.x, e.evt.y)
+    
+    const closest = findClosest(e.evt.layerX, e.evt.layerY)
     if (closest === undefined) {
         return
     }
 
-    ctx.value.currentWireGate = closest
+    ctx.value.connectInfo.startX = e.evt.layerX
+    ctx.value.connectInfo.startY = e.evt.layerY
+    ctx.value.connectInfo.currentWireGate = closest
 }
 
 const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
@@ -260,20 +279,22 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
         return
     }
 
-    if (ctx.value.currentWireGate === null) {
+    if (ctx.value.connectInfo.currentWireGate === null) {
         return
     }
 
-    const closest = findClosest(e.evt.x, e.evt.y)
+    const closest = findClosest(e.evt.layerX, e.evt.layerY)
     if (closest === undefined) {
         return
     }
+    ctx.value.connectInfo.finalX = e.evt.layerX
+    ctx.value.connectInfo.finalY = e.evt.layerY
 
     const command = new ConnectGateCommand(
-        ctx.value.currentWireGate, closest, ctx.value
+        ctx.value.connectInfo.currentWireGate, closest, ctx.value
     )
-    command.do()
-    history.push(command)
+    if (command.do())
+        history.push(command)
 }
 
 </script>
@@ -315,7 +336,7 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
 
                 <el-menu-item-group title="Logic" class="item-group">
                     <el-menu-item index="or-gate" class="sub-menu-item">Or Gate</el-menu-item>
-                    <el-menu-item index="and-gate" class="sub-menu-item">And Gate</el-menu-item>
+                    <el-menu-item index="and-gate" class="sub-menu-item" @click="addAndGate">And Gate</el-menu-item>
                     <el-menu-item index="not-gate" class="sub-menu-item">Not Gate</el-menu-item>
                 </el-menu-item-group>
             </el-sub-menu>
