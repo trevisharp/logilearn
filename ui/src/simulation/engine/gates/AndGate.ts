@@ -61,9 +61,9 @@ export class AndGate implements Gate {
 
     getBestInput(x: number, y: number): Input | null {
         if (y - this.y < this.height / 2)
-            return this.inputA
+            return this.inputA.connected ? null : this.inputA
 
-        return this.inputB
+        return this.inputB.connected ? null : this.inputB
     }
 
     getBestOutput(): Output | null {

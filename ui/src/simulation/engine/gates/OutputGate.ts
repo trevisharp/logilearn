@@ -79,6 +79,8 @@ export class OutputGate implements Gate {
 
     
     getBestInput(): Input | null {
+        if (this.input.connected)
+            return null
         return this.input
     }
     

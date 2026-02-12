@@ -3,6 +3,7 @@ import type { Signal } from "./Signal"
 export class Input {
     x = 0
     y = 0
+    connected = false
     
     constructor(public tilte: string | null = null) { }
     state: Signal = null
