@@ -9,8 +9,9 @@ export class Output {
     private onSignalChange: ((output: Output) => void)[] = []
 
     sendSignal(newState: Signal) {
-        if (this.state == newState)
+        if (this.state == newState) {
             return
+        }
         
         this.state = newState
         this.onSignalChange.forEach(func => {

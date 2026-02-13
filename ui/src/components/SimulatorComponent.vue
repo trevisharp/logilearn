@@ -1,22 +1,25 @@
 <script lang="ts" setup>
+
+import Konva from 'konva';
 import { ElCard, ElMenu, ElSubMenu, ElMenuItem, ElMenuItemGroup, ElIcon } from 'element-plus';
 import { Plus, RefreshLeft, RefreshRight, Link } from '@element-plus/icons-vue';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { onMounted, onUnmounted, ref } from 'vue';
+
 import { Circuit } from '@/simulation/engine/Circuit';
 import type { RenderContext } from '@/simulation/rendering/RenderContext';
-import Konva from 'konva';
-import type { Command } from '@/simulation/commands/Command';
-import { MoveGateCommand } from '@/simulation/commands/MoveGateCommand';
-import type { SimulationItem } from '@/simulation/engine/SimulationItem';
-import { ConnectGateCommand } from '@/simulation/commands/ConnectGateCommand';
 import type { Gate } from '@/simulation/engine/Gate';
-import { AddGateCommand } from '@/simulation/commands/AddGateCommand';
+import type { SimulationItem } from '@/simulation/engine/SimulationItem';
 import { NotGate } from '@/simulation/engine/gates/NotGate';
 import { OutputGate } from '@/simulation/engine/gates/OutputGate';
 import { InputGate } from '@/simulation/engine/gates/InputGate';
 import { AndGate } from '@/simulation/engine/gates/AndGate';
 import { OrGate } from '@/simulation/engine/gates/OrGate';
+
+import type { Command } from '@/simulation/commands/Command';
+import { MoveGateCommand } from '@/simulation/commands/MoveGateCommand';
+import { ConnectGateCommand } from '@/simulation/commands/ConnectGateCommand';
+import { AddGateCommand } from '@/simulation/commands/AddGateCommand';
 
 const circuit = new Circuit()
 const visualMap = new Map<Konva.Group, SimulationItem>()
@@ -39,6 +42,17 @@ onMounted(() =>
 
 const history: Command[] = []
 const undohistory: Command[] = []
+
+const docommand = (command: Command) => {
+    if (!command.do()) {
+        return
+    }
+    history.push(command)
+    
+    while (undohistory.length) { 
+        undohistory.pop();
+    }
+}
 
 const undo = () => {
     const command = history.pop()
@@ -155,8 +169,7 @@ const handleDrop = () => {
     const command = new MoveGateCommand(
         simulationItem.getVisualItem(), pointerStart, pointerEnd
     )
-    if (command.do())
-        history.push(command)
+    docommand(command)
 
     pointerStart = null
     draggedGroup = null
@@ -188,6 +201,8 @@ const onKeyDown = (e: KeyboardEvent) => {
         return
     }
     ctx.value.connectMode = !ctx.value.connectMode
+    bestInputClosest?.hideBestInput()
+    bestOutputClosest?.hideBestOutput()
     return
   }
 }
@@ -208,8 +223,7 @@ const addInput = () => {
         menu.value.x, menu.value.y + newItemDeslocation
     )
     newItemDeslocation += 40
-    if (command.do())
-        history.push(command)
+    docommand(command)
 }
 
 const addOutput = () => {
@@ -219,8 +233,7 @@ const addOutput = () => {
         menu.value.x, menu.value.y + newItemDeslocation
     )
     newItemDeslocation += 40
-    if (command.do())
-        history.push(command)
+    docommand(command)
 }
 
 const addNotGate = () => {
@@ -230,8 +243,7 @@ const addNotGate = () => {
         menu.value.x, menu.value.y + newItemDeslocation
     )
     newItemDeslocation += 40
-    if (command.do())
-        history.push(command)
+    docommand(command)
 }
 
 const addAndGate = () => {
@@ -241,8 +253,7 @@ const addAndGate = () => {
         menu.value.x, menu.value.y + newItemDeslocation
     )
     newItemDeslocation += 40
-    if (command.do())
-        history.push(command)
+    docommand(command)
 }
 
 const addOrGate = () => {
@@ -252,8 +263,7 @@ const addOrGate = () => {
         menu.value.x, menu.value.y + newItemDeslocation
     )
     newItemDeslocation += 40
-    if (command.do())
-        history.push(command)
+    docommand(command)
 }
 
 //#endregion
@@ -399,11 +409,11 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
     const command = new ConnectGateCommand(
         ctx.value.connectInfo.currentWireGate, closest, ctx.value
     )
-    if (command.do())
-        history.push(command)
+    docommand(command)
 }
 
 //#endregion
+
 
 </script>
 
