@@ -193,21 +193,21 @@ const handleDrop = () => {
 //#region SHORTCUT KEYS SETUP
 
 const onKeyDown = (e: KeyboardEvent) => {
-    const isCtrl = e.ctrlKey || e.metaKey
+    const isCtrl = e.ctrlKey
 
-  if (e.key === 'z' || e.key === 'Z' && isCtrl) {
+  if ((e.key === 'z' || e.key === 'Z') && isCtrl) {
     e.preventDefault()
     undo()
     return
   }
 
-  if (e.key === 'y' || e.key === 'Y' && isCtrl) {
+  if ((e.key === 'y' || e.key === 'Y') && isCtrl) {
     e.preventDefault()
     redo()
     return
   }
 
-  if (e.key === 'k' || e.key === 'K' && isCtrl) {
+  if ((e.key === 'k' || e.key === 'K') && isCtrl) {
     e.preventDefault()
     if (ctx.value === undefined) {
         return
