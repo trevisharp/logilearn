@@ -21,7 +21,7 @@ import { MoveGateCommand } from '@/simulation/commands/MoveGateCommand';
 import { ConnectGateCommand } from '@/simulation/commands/ConnectGateCommand';
 import { AddGateCommand } from '@/simulation/commands/AddGateCommand';
 import type { CircuitModel } from '@/simulation/model/CircuitModel';
-import { toCircuit, toModel } from '@/simulation/model/ConvertModel';
+import { toCircuit } from '@/simulation/model/ConvertModel';
 
 const props = withDefaults(
     defineProps<{ model: CircuitModel }>(),
@@ -447,8 +447,6 @@ onMounted(() => {
         comm.do()
         history.push(comm)
     });
-
-    console.log(toModel(history))
 })
 
 //#endregion

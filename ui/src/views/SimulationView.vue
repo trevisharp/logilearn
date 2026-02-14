@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AIText from '@/components/AIText.vue';
 import SimulatorComponent from '@/components/SimulatorComponent.vue';
 
 const model = {
@@ -27,6 +28,10 @@ const model = {
     <div class="page-container">
         <SimulatorComponent :model="model" />
     </div>
+
+    <div class="ai-container">
+        <AIText></AIText>
+    </div>
 </template>
 
 <style scoped>
@@ -34,5 +39,11 @@ const model = {
     width: 100%;
     height: 100%;
     overflow: hidden;
+}
+
+.ai-container {
+    position: absolute;
+    width: 100%;
+    bottom: 20px;
 }
 </style>
