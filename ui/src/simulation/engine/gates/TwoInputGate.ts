@@ -23,7 +23,7 @@ export class TwoInputGate implements Gate {
         this.inputB.y += 0.8 * this.height
         this.output.x += this.width
         this.output.y += this.height / 2
-
+        
         this.inputA.subscribe(() => this.state = updateState(this.inputA.state, this.inputB.state))
         this.inputB.subscribe(() => this.state = updateState(this.inputA.state, this.inputB.state))
     }

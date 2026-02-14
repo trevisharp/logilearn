@@ -10,9 +10,19 @@ export class Wire implements SimulationItem {
       Received.subscribe(this.event)
     }
 
-    public Sended: Input | null = null
+    connectInput(input: Input) {
+      if (this.Sended != null) {
+        return
+      }
+
+      this.Sended = input
+      this.Sended.reciveSignal(this.Received.state)
+    }
+
+    private Sended: Input | null = null
 
     remove() {
+      this.Sended?.unsubscribe()
       this.Received.unsubscribe(this.event)
     }
 

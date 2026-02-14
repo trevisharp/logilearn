@@ -5,13 +5,14 @@ export class Input {
     y = 0
     connected = false
     
-    constructor(public tilte: string | null = null) { }
+    constructor(public title: string | null = null) { }
     state: Signal = 0
     private onSignalChange?: (input: Input) => void
 
     reciveSignal(newState: Signal) {
-        if (this.state == newState)
+        if (this.state == newState) {
             return
+        }
         
         this.state = newState
         this.onSignalChange?.(this)
@@ -19,5 +20,10 @@ export class Input {
 
     subscribe(func: (i: Input) => void) {
         this.onSignalChange = func;
+    }
+
+    unsubscribe() {
+        this.state = 0
+        this.onSignalChange = undefined
     }
 }

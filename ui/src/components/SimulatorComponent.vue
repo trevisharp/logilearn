@@ -2,7 +2,7 @@
 
 import Konva from 'konva';
 import { ElCard, ElMenu, ElSubMenu, ElMenuItem, ElMenuItemGroup, ElIcon } from 'element-plus';
-import { Plus, RefreshLeft, RefreshRight, Link } from '@element-plus/icons-vue';
+import { Plus, RefreshLeft, RefreshRight, Link, CopyDocument } from '@element-plus/icons-vue';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { onMounted, onUnmounted, ref } from 'vue';
 
@@ -314,6 +314,7 @@ const mousedownConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
         return
     }
 
+    line.destroy()
     line = new Konva.Line({
         points: [ e.evt.layerX, e.evt.layerY, e.evt.layerX, e.evt.layerY ],
         stroke: '#999',
@@ -382,11 +383,6 @@ const mousemoveConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
 }
 
 const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
-    
-    if (e.target.getClassName() !== "Stage") {
-        return
-    }
-    
     if (!ctx.value?.connectMode) {
         return
     }
@@ -414,6 +410,14 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
 
 //#endregion
 
+
+//#region CLONE
+
+const clone = () => {
+    
+}
+
+//#endregion
 
 </script>
 
@@ -478,6 +482,11 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
             <el-menu-item index="redo" class="menu-item" @click="redo">
                 <el-icon><refresh-right color="white"/></el-icon>
                 <span class="item-title">Redo (Ctrl + Y)</span>
+            </el-menu-item>
+
+            <el-menu-item index="redo" class="menu-item" @click="clone">
+                <el-icon><CopyDocument /></el-icon>
+                <span class="item-title">Clone</span>
             </el-menu-item>
 
         </el-menu>

@@ -21,6 +21,7 @@ export class Output {
 
     subscribe(func: (o: Output) => void) {
         this.onSignalChange.push(func)
+        func(this)
     }
 
     unsubscribe(func: (o: Output) => void) {

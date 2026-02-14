@@ -33,7 +33,7 @@ export class ConnectGateCommand implements Command {
         input.connected = true
 
         this.wire = new Wire(output)
-        this.wire.Sended = input
+        this.wire.connectInput(input)
 
         const group = new Konva.Group()
         
