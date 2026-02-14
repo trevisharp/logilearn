@@ -13,17 +13,19 @@ export class ConnectGateCommand implements Command {
     constructor(
         public startGate: Gate,
         public endGate: Gate,
+        public startX: number,
+        public startY: number,
+        public finalX: number,
+        public finalY: number,
         public ctx: RenderContext
     ) { }
 
     do(): boolean {
         const output = this.startGate.getBestOutput(
-            this.ctx.connectInfo.startX,
-            this.ctx.connectInfo.startY
+            this.startX, this.startY
         )
         const input = this.endGate.getBestInput(
-            this.ctx.connectInfo.finalX,
-            this.ctx.connectInfo.finalY
+            this.finalX, this.finalY
         )
         if (output === null || input === null) {
             return false

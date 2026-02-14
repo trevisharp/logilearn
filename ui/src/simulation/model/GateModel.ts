@@ -1,4 +1,6 @@
 export interface GateModel {
     id: string
-    gateType: string
+    type: string
+    x: number
+    y: number
 }

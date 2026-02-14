@@ -20,6 +20,18 @@ import type { Command } from '@/simulation/commands/Command';
 import { MoveGateCommand } from '@/simulation/commands/MoveGateCommand';
 import { ConnectGateCommand } from '@/simulation/commands/ConnectGateCommand';
 import { AddGateCommand } from '@/simulation/commands/AddGateCommand';
+import type { CircuitModel } from '@/simulation/model/CircuitModel';
+import { toCircuit, toModel } from '@/simulation/model/ConvertModel';
+
+const props = withDefaults(
+    defineProps<{ model: CircuitModel }>(),
+    {
+        model: () => ({
+            gates: [],
+            wires: []
+        })
+    }
+)
 
 const circuit = new Circuit()
 const visualMap = new Map<Konva.Group, SimulationItem>()
@@ -403,7 +415,10 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
     ctx.value.connectInfo.finalY = e.evt.layerY
 
     const command = new ConnectGateCommand(
-        ctx.value.connectInfo.currentWireGate, closest, ctx.value
+        ctx.value.connectInfo.currentWireGate, closest, 
+        ctx.value.connectInfo.startX, ctx.value.connectInfo.startY,
+        ctx.value.connectInfo.finalX, ctx.value.connectInfo.finalY,
+        ctx.value
     )
     docommand(command)
 }
@@ -416,6 +431,25 @@ const mouseupConnectLogic = (e: KonvaEventObject<PointerEvent>) => {
 const clone = () => {
     
 }
+
+//#endregion
+
+
+//#region LOAD CIRCUIT
+
+onMounted(() => {
+    if (ctx.value === undefined) {
+        return
+    }
+
+    const comms = toCircuit(props.model, circuit, ctx.value)
+    comms.forEach(comm => {
+        comm.do()
+        history.push(comm)
+    });
+
+    console.log(toModel(history))
+})
 
 //#endregion
 

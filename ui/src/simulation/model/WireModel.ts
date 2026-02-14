@@ -1,4 +1,4 @@
 export interface WireModel {
-    fromOutputId: string
-    toInputId: string
+    fromId: string
+    toId: string
 }
