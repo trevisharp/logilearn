@@ -1,3 +1,5 @@
+using LogiLearn.Contracts.V1;
+
 namespace LogiLearn.Endpoints.V1;
 
 public static class FeatureFlagEndpoints
@@ -6,7 +8,9 @@ public static class FeatureFlagEndpoints
     {
         route.MapGet("/flags", () =>
         {
-            return Results.Ok();
+            return Results.Ok(new FeatureFlags(
+                AICircuitGenerator: true
+            ));
         });
 
         return route;
