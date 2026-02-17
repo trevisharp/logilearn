@@ -1,4 +1,5 @@
-using LogiLearn.Contracts.V1;
+using LogiLearn.Infrastrucutre;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LogiLearn.Endpoints.V1;
 
@@ -6,11 +7,9 @@ public static class FeatureFlagEndpoints
 {
     public static RouteGroupBuilder MapFeatureFlagEndpoints(this RouteGroupBuilder route)
     {
-        route.MapGet("/flags", () =>
+        route.MapGet("/flags", async ([FromServices]FeatureFlagService flagService) =>
         {
-            return Results.Ok(new FeatureFlags(
-                AICircuitGenerator: true
-            ));
+            return Results.Ok(flagService.Get());
         });
 
         return route;

@@ -1,8 +1,17 @@
+using LogiLearn.Contracts.V1;
 using LogiLearn.Endpoints;
+using LogiLearn.Infrastrucutre;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+
+builder.Configuration
+    .AddJsonFile("featureflags.json", optional: false, reloadOnChange: true);
+
+builder.Services.Configure<FeatureFlags>(builder.Configuration);
+builder.Services.AddSingleton<FeatureFlagService>();
+
 
 var app = builder.Build();
 

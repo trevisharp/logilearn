@@ -1,33 +1,12 @@
-using System.Text.Json;
 using LogiLearn.Contracts.V1;
+using Microsoft.Extensions.Options;
 
 namespace LogiLearn.Infrastrucutre;
 
-public class FeatureFlagService
+public class FeatureFlagService(IOptionsMonitor<FeatureFlags> flags)
 {
-    FeatureFlags current;
-    DateTime nextUpdate;
+    private readonly IOptionsMonitor<FeatureFlags> flags = flags;
 
-    public FeatureFlagService()
-    {
-        nextUpdate = DateTime.UtcNow.AddSeconds(15);
-        var json = File.ReadAllText("featureflags.json");
-        current = JsonSerializer.Deserialize<FeatureFlags>(json) ?? new();
-    }
-
-    public async Task<FeatureFlags> Get()
-    {
-        if (DateTime.UtcNow < nextUpdate)
-            return current;
-        
-        await UpdateFlags();
-        return current;
-    }
-
-    async Task UpdateFlags()
-    {
-        nextUpdate = DateTime.UtcNow.AddSeconds(15);
-        var json = await File.ReadAllTextAsync("featureflags.json");
-        current = JsonSerializer.Deserialize<FeatureFlags>(json) ?? new();
-    }
+    public FeatureFlags Get()
+        => flags.CurrentValue;
 }
