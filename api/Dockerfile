@@ -9,7 +9,6 @@ COPY /LogiLearn /LogiLearn/
 WORKDIR /LogiLearn
 RUN dotnet publish -c Release -o /app/publish
 
-
 # RUNTIME
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
