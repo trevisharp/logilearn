@@ -1,4 +1,4 @@
-using LogiLearn.Infrastrucutre;
+using LogiLearn.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LogiLearn.Endpoints.V1;
