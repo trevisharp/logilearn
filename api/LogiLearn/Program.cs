@@ -1,6 +1,6 @@
 using LogiLearn.Contracts.V1;
 using LogiLearn.Endpoints;
-using LogiLearn.Infrastrucutre;
+using LogiLearn.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
