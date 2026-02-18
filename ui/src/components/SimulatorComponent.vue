@@ -4,7 +4,7 @@ import Konva from 'konva';
 import { ElCard, ElMenu, ElSubMenu, ElMenuItem, ElMenuItemGroup, ElIcon } from 'element-plus';
 import { Plus, RefreshLeft, RefreshRight, Link, CopyDocument } from '@element-plus/icons-vue';
 import type { KonvaEventObject } from 'konva/lib/Node';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
 import { Circuit } from '@/simulation/engine/Circuit';
 import type { RenderContext } from '@/simulation/rendering/RenderContext';
@@ -437,9 +437,23 @@ const clone = () => {
 
 //#region LOAD CIRCUIT
 
-onMounted(() => {
+const updateCircuit = () => {
     if (ctx.value === undefined) {
         return
+    }
+    
+    while (history.length > 0) {
+        const command = history.pop()
+        
+        if (command === undefined) {
+            continue
+        }
+
+        command.undo()
+    }
+
+    while (undohistory.length > 0) {
+        undohistory.pop()
     }
 
     const comms = toCircuit(props.model, circuit, ctx.value)
@@ -447,7 +461,25 @@ onMounted(() => {
         comm.do()
         history.push(comm)
     });
+
+}
+
+onMounted(() => {
+    if (ctx.value === undefined) {
+        return
+    }
+
+    updateCircuit()
 })
+
+watch(
+  () => props.model,
+  async () => {
+    await nextTick()
+    updateCircuit()
+  },
+  { deep: true }
+)
 
 //#endregion
 

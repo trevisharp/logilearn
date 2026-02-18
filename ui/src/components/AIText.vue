@@ -5,10 +5,10 @@ import { ref } from 'vue'
 
 const input = ref("")
 
-const onRun = () => {
-    
-    
+const emit = defineEmits<{(e: "sended", text: string): void}>()
 
+const onRun = () => {
+    emit("sended", input.value)
     input.value = ""
 }
 </script>

@@ -1,36 +1,42 @@
 <script setup lang="ts">
 import AIText from '@/components/AIText.vue';
 import SimulatorComponent from '@/components/SimulatorComponent.vue';
+import { requestGeneration } from '@/services/aiGeneratorService';
+import { onMounted, ref } from 'vue';
 
-const model = {
-    gates: [
-        { id: 'i1', x: 100, y: 100, type: 'input' },
-        { id: 'i2', x: 100, y: 200, type: 'input' },
-        { id: 'a1', x: 200, y: 100, type: 'and' },
-        { id: 'a2', x: 200, y: 200, type: 'and' },
-        { id: 'n1', x: 300, y: 100, type: 'not' },
-        { id: 'n2', x: 300, y: 200, type: 'not' },
-        { id: 'o1', x: 400, y: 100, type: 'output' },
+const model = ref({
+    gates: [ 
+        { id: "in", x: 100, y: 100, type: "input" }, 
+        { id: "out", x: 200, y: 100, type: "output"}
     ],
-    wires: [
-        { fromId: 'i1', toId: 'a1' },
-        { fromId: 'i2', toId: 'a2' },
-        { fromId: 'a1', toId: 'n1' },
-        { fromId: 'a2', toId: 'n2' },
-        { fromId: 'n1', toId: 'o1' },
-        { fromId: 'n1', toId: 'a2' },
-        { fromId: 'n2', toId: 'a1' },
-    ]
+    wires: [ { fromId: "in", toId: "out"} ]
+})
+
+const width = ref(0);
+const height = ref(0)
+const container = ref<HTMLElement | null>(null)
+onMounted(() =>
+{
+    if (container.value == null)
+        return;
+
+    width.value = container.value.clientWidth;
+    height.value = container.value.clientHeight;
+})
+
+const generateModel = async (prompt: string) => {
+    const response = await requestGeneration(prompt, width.value, height.value)
+    model.value = JSON.parse(response)
 }
 </script>
 
 <template>
-    <div class="page-container">
+    <div class="page-container" ref="container">
         <SimulatorComponent :model="model" />
     </div>
 
     <div class="ai-container">
-        <AIText></AIText>
+        <AIText @sended="generateModel"></AIText>
     </div>
 </template>
 

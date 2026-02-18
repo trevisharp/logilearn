@@ -15,16 +15,16 @@ public static class AIGeneratorEndpoints
             The user will request a digital circuit generate from a json.
             Your work is generate the json, without any other otuput, following the json example:
             {
-                gates: [
-                    { id: 'in1', x: 100, y: 100, type: 'input' },
-                    { id: 'in2', x: 100, y: 200, type: 'input' },
-                    { id: 'port', x: 200, y: 100, type: 'and' },
-                    { id: 'out', x: 400, y: 100, type: 'output' },
+                "gates": [
+                    { "id": "in1", "x": 100, "y": 100, "type": "input" },
+                    { "id": "in2", "x": 100, "y": 200, "type": "input" },
+                    { "id": "port", "x": 200, "y": 100, "type": "and" },
+                    { "id": "out", "x": 400, "y": 100, "type": "output" },
                 ],
-                wires: [
-                    { fromId: 'in1', toId: 'port' },
-                    { fromId: 'in2', toId: 'port' },
-                    { fromId: 'port', toId: 'out' },
+                "wires": [
+                    { "fromId": "in1", "toId": "port" },
+                    { "fromId": "in2", "toId": "port" },
+                    { "fromId": "port", "toId": "out" },
                 ]
             }
             Make a inline json.
