@@ -1,7 +1,7 @@
 using LogiLearn.Contracts.V1;
 using Microsoft.Extensions.Options;
 
-namespace LogiLearn.Infrastrucutre;
+namespace LogiLearn.Infrastructure;
 
 public class FeatureFlagService(IOptionsMonitor<FeatureFlags> flags)
 {

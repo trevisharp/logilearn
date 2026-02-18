@@ -9,6 +9,7 @@ public static class Configure
         var group = app.MapGroup("/api/v1");
 
         group.MapFeatureFlagEndpoints();
+        group.MapAIGeneratorEndpointsEndpoints();
 
         return app;
     }
