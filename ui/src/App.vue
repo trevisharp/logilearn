@@ -1,4 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import router from './router';
+import { useUserStore } from './stores/userStore';
+import { ElButton  } from 'element-plus';
+
+const user = useUserStore()
+
+</script>
 
 <template>
 
@@ -9,6 +16,10 @@
         <h3>
           LogiLearn
         </h3>
+      </div>
+
+      <div class="navigation-item" v-if="!user.logged">
+        <el-button v-on:click="() => router.push({ path: '/login' })">Login</el-button>
       </div>
       
     </div>
@@ -28,6 +39,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
 }
 
 .navigation-item {

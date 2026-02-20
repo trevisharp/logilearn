@@ -4,7 +4,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import VueKonva from 'vue-konva'
-import { useFlagStore } from './stores/flags'
+import { useFlagsStore } from './stores/flagsStore'
 
 const app = createApp(App)
 
@@ -13,7 +13,7 @@ app.use(router)
 app.use(VueKonva)
 
 const bootstrap = async () => {
-  const flagsStore = useFlagStore()
+  const flagsStore = useFlagsStore()
   await flagsStore.loadFlags()
   app.mount("#app")
 }

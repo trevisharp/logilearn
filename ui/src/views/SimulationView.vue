@@ -2,10 +2,10 @@
 import AIText from '@/components/AIText.vue';
 import SimulatorComponent from '@/components/SimulatorComponent.vue';
 import { requestGeneration } from '@/services/aiGeneratorService';
-import { useFlagStore  } from '@/stores/flags';
+import { useFlagsStore  } from '@/stores/flagsStore';
 import { onMounted, ref } from 'vue';
 
-const flagStore = useFlagStore()
+const flagStore = useFlagsStore()
 
 const model = ref({
     gates: [ 

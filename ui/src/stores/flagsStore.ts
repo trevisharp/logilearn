@@ -2,7 +2,7 @@ import { requestFeatureFlags } from "@/services/featureFlagService";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useFlagStore = defineStore("flags", () => {
+export const useFlagsStore = defineStore("flags", () => {
     const aiCircuitGenerator = ref(false)
 
     const setFlags = (flags: { aiCircuitGenerator: boolean }) => {
@@ -10,8 +10,15 @@ export const useFlagStore = defineStore("flags", () => {
     }
 
     const loadFlags = async () => {
-        const response = await requestFeatureFlags()
-        setFlags(response)
+        try {
+            const response = await requestFeatureFlags()
+            setFlags(response)
+        } catch (error) {
+            console.log(error)
+            setFlags({
+                aiCircuitGenerator: false
+            })
+        }
     }
     
     return { aiCircuitGenerator, setFlags, loadFlags }
