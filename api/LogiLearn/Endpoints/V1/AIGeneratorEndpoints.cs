@@ -8,7 +8,7 @@ namespace LogiLearn.Endpoints.V1;
 
 public static class AIGeneratorEndpoints
 {
-    public static RouteGroupBuilder MapAIGeneratorEndpointsEndpoints(this RouteGroupBuilder route)
+    public static RouteGroupBuilder MapAIGeneratorEndpoints(this RouteGroupBuilder route)
     {
         route.MapPost("/ai", async (
             [FromServices]ILLMService llm,
