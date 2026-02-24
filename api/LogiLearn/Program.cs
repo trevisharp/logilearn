@@ -17,6 +17,7 @@ builder.Services.AddCors(options =>
     {
         policy
             .WithOrigins(allowedOrigin!)
+            .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -36,13 +37,13 @@ builder.Services.AddSingleton<FeatureFlagService>();
 
 var app = builder.Build();
 
+app.UseHttpsRedirection();
+
 app.UseCors("FrontendPolicy");
 
 app.MapV1Endpoints();
 
 if (app.Environment.IsDevelopment())
     app.MapOpenApi();
-
-app.UseHttpsRedirection();
 
 app.Run();

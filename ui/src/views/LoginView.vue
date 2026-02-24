@@ -5,11 +5,10 @@ import { Icon } from '@iconify/vue'
 const auth = () => {
     window.location.href = import.meta.env.VITE_API_BASE_URL + "/auth"
 }
-
 </script>
 
 <template>
-    <div class="container">
+    <div class="container"> 
         <div class="authBox">
             <h3>Opções de Login</h3>
             <div class="authOptions">

@@ -21,6 +21,7 @@ public static class GithubUserInfoEndpoints
 
             var response = await client.GetAsync("/user");
 
+            Console.WriteLine("oi");
             var content = await response.Content.ReadFromJsonAsync<GithubUserData>();
             return Results.Ok(content);
         });

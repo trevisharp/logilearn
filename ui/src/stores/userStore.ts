@@ -14,9 +14,9 @@ export const useUserStore = defineStore("user", () => {
         try {
             const response = await getUserInfo()
             login.value = response.login;
-            username.value = response.username;
-            github.value = response.github;
-            avatarUrl.value = response.avatarUrl;
+            username.value = response.name;
+            github.value = response.html_url;
+            avatarUrl.value = response.avatar_url;
             logged.value = true;
 
         } catch (error) {
