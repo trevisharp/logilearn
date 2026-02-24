@@ -4,7 +4,6 @@ import { useUserStore } from './stores/userStore';
 import { ElButton  } from 'element-plus';
 
 const user = useUserStore()
-
 </script>
 
 <template>
@@ -13,13 +12,17 @@ const user = useUserStore()
     <div class="navigation">
 
       <div class="navigation-item">
-        <h3>
+        <h3 v-on:click="() => router.push('/')" style="cursor: pointer;">
           LogiLearn
         </h3>
       </div>
 
       <div class="navigation-item" v-if="!user.logged">
-        <el-button v-on:click="() => router.push({ path: '/login' })">Login</el-button>
+        <el-button v-on:click="() => router.push('/login')">Login</el-button>
+      </div>
+
+      <div class="navigation-item" v-if="user.logged">
+        <el-button v-on:click="() => router.push('/profile')">Perfil</el-button>
       </div>
       
     </div>
