@@ -13,9 +13,9 @@ app.use(router)
 app.use(VueKonva)
 
 const bootstrap = async () => {
+  app.mount("#app")
   const flagsStore = useFlagsStore()
   await flagsStore.loadFlags()
-  app.mount("#app")
 }
 
 bootstrap()

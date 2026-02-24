@@ -12,6 +12,7 @@
     "lint": "eslint . --fix --cache"
   },
   "dependencies": {
+    "@iconify/vue": "^5.0.0",
     "axios": "^1.13.5",
     "element-plus": "^2.13.2",
     "konva": "^10.2.0",
