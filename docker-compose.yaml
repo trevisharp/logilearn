@@ -1,16 +1,4 @@
 services:
-  db:
-    image: postgres:16
-    container_name: postgres_db
-    environment:
-      POSTGRES_DB: appdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
   api:
     build:
       context: ./api
@@ -23,6 +11,3 @@ services:
       - db
     volumes:
       - ./api/LogiLearn/featureflags.json:/app/featureflags.json
-
-volumes:
-  postgres_data:
