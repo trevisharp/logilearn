@@ -73,11 +73,10 @@ public static class GithubOAuthEndpoints
 
             var userToken = await oauth.GetToken(code);
 
-            response.Cookies.Append("session", userToken, new CookieOptions
-            {
+            response.Cookies.Append("session", userToken, new CookieOptions {
                 Secure = true,
                 HttpOnly = true,
-                SameSite = SameSiteMode.Strict
+                SameSite = SameSiteMode.None
             });
 
             return Results.Redirect($"{fronturl}/profile");

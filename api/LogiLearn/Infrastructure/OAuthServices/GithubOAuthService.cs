@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 namespace LogiLearn.Infrastructure.OAuthServices;
 
 public class GithubOAuthService(
@@ -36,21 +34,24 @@ public class GithubOAuthService(
             var error = await response.Content.ReadAsStringAsync();
             if (logger.IsEnabled(LogLevel.Error))
                 logger.LogError("Github OAuth return with status {error}.", error);
+            throw new Exception("OAuth Github API failed.");    
         }
 
-        var json = await JsonDocument.ParseAsync(
-            await response.Content.ReadAsStreamAsync()
-        );
-        var token = json.RootElement
-            .GetProperty("access_token").GetString();
+        var tokenData = await response.Content.ReadAsStringAsync();
+
+        var accessToken = tokenData
+            .Split([ '=', '&' ])
+            .SkipWhile(value => value is not "access_token")
+            .Skip(1)
+            .FirstOrDefault();
         
-        if (token is null)
+        if (accessToken is null)
         {
             if (logger.IsEnabled(LogLevel.Error))
-                logger.LogError("Github OAuth return null access_token.");
-            throw new Exception("OAuth Github API failed.");
+                logger.LogError("Invalid github token format: {error}.", tokenData);
+            throw new Exception("OAuth Github API failed.");    
         }
 
-        return token;
+        return accessToken;
     }
 }

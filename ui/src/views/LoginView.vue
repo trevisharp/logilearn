@@ -2,9 +2,8 @@
 import { ElButton } from 'element-plus';
 import { Icon } from '@iconify/vue'
 
-const auth = () =>
-{
-    window.location.href = "http://localhost:5148/api/v1/auth"
+const auth = () => {
+    window.location.href = import.meta.env.VITE_API_BASE_URL + "/auth"
 }
 
 </script>

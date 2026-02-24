@@ -1,5 +1,6 @@
 using LogiLearn.Endpoints.V1;
 using LogiLearn.Endpoints.V1.Auth;
+using LogiLearn.Endpoints.V1.User;
 
 namespace LogiLearn.Endpoints;
 
@@ -12,6 +13,7 @@ public static class Configure
         group.MapFeatureFlagEndpoints();
         group.MapAIGeneratorEndpoints();
         group.MapGithubOAuthEndpoints();
+        group.MapGithubUserInfoEndpoints();
 
         return app;
     }
