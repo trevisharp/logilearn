@@ -37,15 +37,15 @@ public class OpenAILLMService(IConfiguration configuration, ILogger<OpenAILLMSer
         {
             var error = await response.Content.ReadAsStringAsync();
             if (logger.IsEnabled(LogLevel.Error))
-                logger.LogError("Erro OpenAI: {Content}", error);
+                logger.LogError("Erro OpenAI: {error}", error);
             throw new ApplicationException($"Erro OpenAI: {error}");
         }
 
-        var document = await JsonDocument.ParseAsync(
+        var json = await JsonDocument.ParseAsync(
             await response.Content.ReadAsStreamAsync()
         );
 
-        var output = document.RootElement
+        var output = json.RootElement
             .GetProperty("choices")[0]
             .GetProperty("message")
             .GetProperty("content")

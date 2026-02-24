@@ -1,6 +1,7 @@
 import LoginView from '@/views/LoginView.vue'
 import MainView from '@/views/MainView.vue'
 import SimulationView from '@/views/SimulationView.vue'
+import UserView from '@/views/UserView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -8,7 +9,8 @@ const router = createRouter({
   routes: [
     { path: "/", component: MainView },
     { path: "/simulation", component: SimulationView },
-    { path: "/login", component: LoginView }
+    { path: "/login", component: LoginView },
+    { path: "/profile", component: UserView },
   ],
 })
 

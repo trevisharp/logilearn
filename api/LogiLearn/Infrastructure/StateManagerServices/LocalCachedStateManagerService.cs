@@ -22,7 +22,7 @@ public class LocalCachedStateManagerService(IMemoryCache cache) : IStateManagerS
     }
 
     static string RemoveProblematicUrlChars(string str)
-        => str.Replace('/', '_').Replace("=", "-");
+        => str.Replace('/', '_').Replace("=", "_").Replace("+", "_");
 
     public bool Exists(string? state)
         => state is not null && cache.TryGetValue(state, out _);
