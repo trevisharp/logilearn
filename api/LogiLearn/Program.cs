@@ -55,7 +55,7 @@ app.UseSession();
 
 app.UseCors("FrontendPolicy");
 
-app.UseCRSFTokenMiddleware();
+// app.UseCRSFTokenMiddleware();
 
 app.MapV1Endpoints();
 
