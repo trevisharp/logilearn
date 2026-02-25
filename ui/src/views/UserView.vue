@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { http } from '@/services/http';
 import { useUserStore } from '@/stores/userStore';
 import { onMounted } from 'vue';
 
@@ -6,8 +7,13 @@ const store = useUserStore()
 
 onMounted(async () => {
     await store.loadProfile()
+    await http.get("/gists")
 })
 
+
+const openGit = () => {
+    window.location.href = store.github
+}
 </script>
 
 <template>
@@ -19,7 +25,8 @@ onMounted(async () => {
         <h1> Bem-vindo {{ store.username }} ({{ store.login }})! </h1>
         <div class="userdata">
             <div class="userphoto">
-                <img :src="store.avatarurl" class="photo">
+                <img :src="store.avatarurl" class="photo"
+                    @click="openGit" style="cursor: pointer;">
             </div>
             <div class="usergists">
                 <h2>Seus gists</h2>

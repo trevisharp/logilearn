@@ -8,7 +8,7 @@ public static class GithubUserInfoEndpoints
 {
     sealed class GithubOAuthEndpoint { }
 
-    public static RouteGroupBuilder MapGithubUserInfoEndpoints(this RouteGroupBuilder route)
+    public static IEndpointRouteBuilder MapGithubUserInfoEndpoints(this IEndpointRouteBuilder route)
     {
         route.MapGet("/user", async (HttpContext request, [FromServices]IGithubClientBuilder builder) =>
         {

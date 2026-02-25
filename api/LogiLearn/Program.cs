@@ -1,5 +1,6 @@
 using LogiLearn.Contracts.V1;
 using LogiLearn.Endpoints;
+using LogiLearn.Endpoints.Middlewares;
 using LogiLearn.Infrastructure;
 using LogiLearn.Infrastructure.GithubServices;
 using LogiLearn.Infrastructure.LLMServices;
@@ -23,6 +24,15 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+});
+
 builder.Configuration
     .AddJsonFile("featureflags.json", optional: false, reloadOnChange: true);
 builder.Services.Configure<FeatureFlags>(builder.Configuration);
@@ -39,11 +49,14 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
+app.UseSession();
+
 app.UseCors("FrontendPolicy");
 
-app.MapV1Endpoints();
+app.UseCRSFTokenMiddleware();
 
-if (app.Environment.IsDevelopment())
-    app.MapOpenApi();
+app.MapV1Endpoints();
 
 app.Run();

@@ -26,4 +26,4 @@ export const useUserStore = defineStore("user", () => {
     }
     
     return { logged, login, github, username, avatarurl: avatarUrl, gists, loadProfile }
-})
+}, { persist: true })

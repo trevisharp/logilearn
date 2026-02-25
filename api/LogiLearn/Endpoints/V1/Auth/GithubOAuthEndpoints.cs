@@ -46,6 +46,7 @@ public static class GithubOAuthEndpoints
             [FromServices]IConfiguration configuration,
             [FromServices]IOAuthService oauth,
             [FromServices]IStateManagerService stateManager,
+            HttpContext context,
             HttpResponse response) =>
         {
             if (!stateManager.Exists(state))
@@ -76,6 +77,15 @@ public static class GithubOAuthEndpoints
             response.Cookies.Append("session", userToken, new CookieOptions {
                 Secure = true,
                 HttpOnly = true,
+                SameSite = SameSiteMode.None
+            });
+
+            var csrfToken = Guid.NewGuid().ToString();
+            context.Session.SetString("csrf-token", csrfToken);
+
+            response.Cookies.Append("csrf-token", csrfToken, new CookieOptions {
+                Secure = true,
+                HttpOnly = false,
                 SameSite = SameSiteMode.None
             });
 
