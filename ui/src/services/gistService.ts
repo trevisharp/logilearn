@@ -14,3 +14,8 @@ export async function getUserCircuit(id: string) {
     const response = await http.get("/circuits/" + id)
     return response.data
 }
+
+export async function updateUserCircuit(id: string, description: string, circuit: string) {
+    const response = await http.put("/circuits/" + id, { description, circuit })
+    return response.data
+}

@@ -6,7 +6,6 @@ using Contracts.V1;
 using Domain;
 using Endpoints.Attributes;
 using Infrastructure.GithubServices;
-using Microsoft.AspNetCore.Components.Server.Circuits;
 
 public static class GithubGistsEndpoints
 {
@@ -63,7 +62,10 @@ public static class GithubGistsEndpoints
             if (circuit.Key is null)
                 return Results.BadRequest("The gist is not a valid circuit.");
             
-            return Results.Ok(circuit.Value.Content);
+            return Results.Ok(new {
+                circuit = circuit.Value.Content,
+                description = gist.Description
+            });
         });
 
         route.MapPost("/circuits", async (HttpContext context,
@@ -103,9 +105,37 @@ public static class GithubGistsEndpoints
             return Results.Ok(gist);
         }).WithMetadata(new RequireCSRFTokenAttribute());
 
-        route.MapPatch("/circuits/{id}", (string id) =>
+        route.MapPut("/circuits/{id}", async (string id,
+            HttpContext context,
+            ILogger<GistEdnpoints> logger,
+            [FromServices]IGithubClientBuilder builder,
+            [FromBody]CircuitToSave circuit) =>
         {
+            var token = context.Request.Cookies["session"];
+            if (token is null)
+                return Results.Unauthorized();
             
+            var client = builder.GetClient(token);
+
+            var payload = new UpdateGistData {
+                Description = circuit.Description,
+                Files = new() {
+                    { CircuitFile.GetNewName(), new() { Content = circuit.Circuit } }
+                }
+            };
+
+            var response =  await client.PatchAsJsonAsync($"/gists/{id}", payload);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if (logger.IsEnabled(LogLevel.Error))
+                    logger.LogError("Error o POST /gists: {error}", 
+                        await response.Content.ReadAsStringAsync());
+                
+                return Results.StatusCode(502);
+            }
+
+            return Results.Ok();
         }).WithMetadata(new RequireCSRFTokenAttribute());
 
         return route;

@@ -81,8 +81,6 @@ public static class GithubOAuthEndpoints
             });
 
             var csrfToken = Guid.NewGuid().ToString();
-            context.Session.SetString("csrf-token", csrfToken);
-
             response.Cookies.Append("csrf-token", csrfToken, new CookieOptions {
                 Secure = true,
                 HttpOnly = false,

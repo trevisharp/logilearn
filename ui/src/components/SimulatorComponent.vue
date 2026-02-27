@@ -21,7 +21,7 @@ import { MoveGateCommand } from '@/simulation/commands/MoveGateCommand';
 import { ConnectGateCommand } from '@/simulation/commands/ConnectGateCommand';
 import { AddGateCommand } from '@/simulation/commands/AddGateCommand';
 import type { CircuitModel } from '@/simulation/model/CircuitModel';
-import { toCircuit } from '@/simulation/model/ConvertModel';
+import { toCircuit, toModel } from '@/simulation/model/ConvertModel';
 
 const props = withDefaults(
     defineProps<{ model: CircuitModel }>(),
@@ -50,6 +50,34 @@ onMounted(() =>
     height.value = container.value.clientHeight;
 })
 
+
+//#region  AUTOSAVE CALLBACK SYSTEM
+
+const needAutoSave = ref(false)
+const modificationStoped = ref(false)
+const emit = defineEmits(['modelChanged'])
+
+const onModify = () => {
+    needAutoSave.value = true
+    modificationStoped.value = false
+}
+
+const interval = setInterval(() => {
+    if (needAutoSave.value && modificationStoped.value) {
+        emit('modelChanged', JSON.stringify(toModel(history)))
+        needAutoSave.value = false
+    }
+
+    modificationStoped.value = true
+}, 5000)
+
+onUnmounted(() => {
+    clearInterval(interval)
+})
+
+//#endregion
+
+
 //#region UNDO/REDO SYSTEM
 
 const history: Command[] = []
@@ -60,6 +88,8 @@ const docommand = (command: Command) => {
         return
     }
     history.push(command)
+    
+    onModify()
     
     while (undohistory.length) { 
         undohistory.pop();
@@ -74,6 +104,8 @@ const undo = () => {
 
     command.undo()
     undohistory.push(command)
+    
+    onModify()
 }
 
 const redo = () => {
@@ -84,6 +116,8 @@ const redo = () => {
     
     command.do()
     history.push(command)
+    
+    onModify()
 }
 
 //#endregion

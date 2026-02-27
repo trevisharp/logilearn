@@ -16,10 +16,8 @@ public static class CRSFTokenMiddleware
                 return;
             }
 
-            var sessionToken = ctx.Session.GetString("csrf-token");
             var csrftoken = ctx.Request.Headers["X-CSRF-Token"].FirstOrDefault();
-
-            if (string.IsNullOrEmpty(csrftoken) || csrftoken != sessionToken)
+            if (!ctx.Request.Cookies.TryGetValue("csrf-token", out var sessionToken) || csrftoken != sessionToken)
             {
                 ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
                 await ctx.Response.WriteAsync("CSRF token inválido.");

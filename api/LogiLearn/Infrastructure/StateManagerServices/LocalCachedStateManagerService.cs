@@ -25,5 +25,13 @@ public class LocalCachedStateManagerService(IMemoryCache cache) : IStateManagerS
         => str.Replace('/', '_').Replace("=", "_").Replace("+", "_");
 
     public bool Exists(string? state)
-        => state is not null && cache.TryGetValue(state, out _);
+    {
+        if (state is null)
+            return false;
+        
+        var exists = cache.TryGetValue(state, out _);
+        cache.Remove(state);
+
+        return exists;
+    }
 }
