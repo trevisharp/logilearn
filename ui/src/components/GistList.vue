@@ -22,6 +22,10 @@ const props = defineProps<{
 <style lang="css" scoped>
 .gistcontainer {
     display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
     border: solid gray 1px;
+    width: fit-content;
 }
 </style>

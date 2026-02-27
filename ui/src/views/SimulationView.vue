@@ -19,11 +19,12 @@ const height = ref(0)
 const container = ref<HTMLElement | null>(null)
 onMounted(async () =>
 {
-    let code = router.currentRoute.value.params.code as string;
+    const code = router.currentRoute.value.params.code as string;
 
     if (code == "new") {
         const newGist = await createNewCircuit()
-        code = newGist.id
+        router.push("/simulation/" + newGist.id)
+        return;
     }
 
     if (code != "test") {
