@@ -1,25 +1,36 @@
 <script setup lang="ts">
 import AIText from '@/components/AIText.vue';
 import SimulatorComponent from '@/components/SimulatorComponent.vue';
+import router from '@/router';
 import { requestGeneration } from '@/services/aiGeneratorService';
+import { createNewCircuit, getUserCircuit } from '@/services/gistService';
 import { useFlagsStore  } from '@/stores/flagsStore';
 import { onMounted, ref } from 'vue';
 
 const flagStore = useFlagsStore()
 
 const model = ref({
-    gates: [ 
-        { id: "in", x: 100, y: 100, type: "input" }, 
-        { id: "out", x: 200, y: 100, type: "output"}
-    ],
-    wires: [ { fromId: "in", toId: "out"} ]
+    gates: [],
+    wires: []
 })
 
 const width = ref(0);
 const height = ref(0)
 const container = ref<HTMLElement | null>(null)
-onMounted(() =>
+onMounted(async () =>
 {
+    let code = router.currentRoute.value.params.code as string;
+
+    if (code == "new") {
+        const newGist = await createNewCircuit()
+        code = newGist.id
+    }
+
+    if (code != "test") {
+        const json = await getUserCircuit(code)
+        model.value = JSON.parse(json)
+    }
+
     if (container.value == null)
         return;
 

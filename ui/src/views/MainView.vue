@@ -57,7 +57,7 @@ onMounted(() =>
             </div>
 
             <div class="open-new-area">
-                <el-button v-on:click="router.push({ path: '/simulation' })">
+                <el-button v-on:click="router.push({ path: '/simulation/test' })">
                     <h2>
                         Create your circuit >>
                     </h2>

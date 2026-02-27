@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import GistList from '@/components/GistList.vue';
 import type { Gist } from '@/contracts/Gist';
-import { http } from '@/services/http';
 import { useUserStore } from '@/stores/userStore';
 import { onMounted, ref } from 'vue';
 import { ElButton } from 'element-plus';
 import router from '@/router';
+import { getAllUserCircuits } from '@/services/gistService';
 
 const store = useUserStore()
 
@@ -13,7 +13,7 @@ const gists = ref([] as Gist[])
 
 onMounted(async () => {
     await store.loadProfile()
-    gists.value = (await http.get("/gists")).data
+    gists.value = await getAllUserCircuits()
 })
 
 const openGit = () => {
@@ -36,7 +36,7 @@ const openGit = () => {
             <div class="usergists">
                 <h2>Seus gists</h2>
                 <GistList :gists="gists"></GistList>
-                <el-button v-on:click="() => router.push('/new')">Criar Novo Circuito</el-button>
+                <el-button v-on:click="() => router.push('/simulation/new')">Criar Novo Circuito</el-button>
             </div>
         </div>
     </div>

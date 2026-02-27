@@ -9,6 +9,10 @@ const props = defineProps<{
 
 <template>
     <div class="gistcontainer">
+        <div v-if="props.gists.length == 0">
+            Nenhum gist de circuito foi encontrado em seu github.
+        </div>
+
         <div v-for="gist in props.gists" :key="gist.id">
             <GistItem :gist="gist"></GistItem>
         </div>
@@ -18,5 +22,6 @@ const props = defineProps<{
 <style lang="css" scoped>
 .gistcontainer {
     display: flex;
+    border: solid gray 1px;
 }
 </style>

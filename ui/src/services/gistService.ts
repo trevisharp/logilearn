@@ -1,6 +1,16 @@
 import { http } from "./http";
 
-export async function getAllUserGists() {
-    const response = await http.get("/user")
+export async function getAllUserCircuits() {
+    const response = await http.get("/circuits")
+    return response.data
+}
+
+export async function createNewCircuit() {
+    const response = await http.post("/circuits")
+    return response.data
+}
+
+export async function getUserCircuit(id: string) {
+    const response = await http.get("/circuits/" + id)
     return response.data
 }

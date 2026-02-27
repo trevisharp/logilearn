@@ -33,10 +33,10 @@ public static class GithubOAuthEndpoints
 
             var url = new StringBuilder("https://github.com/login/oauth/authorize");
             url.Append($"?client_id={clientId}");
-            url.Append($"&redirect_uri={backurl}/api/v1{callbackUrl}");
             if (scopes is not "none")
-                url.Append($"&scopes={scopes}");
+                url.Append($"&scope={scopes}");
             url.Append($"&state={state}");
+            url.Append($"&redirect_uri={backurl}/api/v1{callbackUrl}");
 
             return Results.Redirect(url.ToString());
         });

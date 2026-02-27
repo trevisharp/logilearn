@@ -12,6 +12,7 @@ public record GithubGist
     public record GithubGistFile
     {
         public required string Filename { get; set; }
+        public string? Content { get; set; }
         public required string Raw_url { get; set; }
     }
 }
