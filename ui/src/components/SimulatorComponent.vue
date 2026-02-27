@@ -51,11 +51,16 @@ onMounted(() =>
 })
 
 
-//#region  AUTOSAVE CALLBACK SYSTEM
+//#region AUTOSAVE CALLBACK SYSTEM
 
 const needAutoSave = ref(false)
 const modificationStoped = ref(false)
 const emit = defineEmits(['modelChanged'])
+
+const save = () => {
+    emit('modelChanged', JSON.stringify(toModel(history)))
+    needAutoSave.value = false
+}
 
 const onModify = () => {
     needAutoSave.value = true
@@ -64,8 +69,7 @@ const onModify = () => {
 
 const interval = setInterval(() => {
     if (needAutoSave.value && modificationStoped.value) {
-        emit('modelChanged', JSON.stringify(toModel(history)))
-        needAutoSave.value = false
+        save()
     }
 
     modificationStoped.value = true
@@ -228,6 +232,12 @@ const handleDrop = () => {
 
 const onKeyDown = (e: KeyboardEvent) => {
     const isCtrl = e.ctrlKey
+
+  if ((e.key === 's' || e.key === 'S') && isCtrl) {
+    e.preventDefault()
+    save()
+    return
+  }
 
   if ((e.key === 'z' || e.key === 'Z') && isCtrl) {
     e.preventDefault()

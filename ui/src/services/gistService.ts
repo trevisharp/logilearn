@@ -17,5 +17,5 @@ export async function getUserCircuit(id: string) {
 
 export async function updateUserCircuit(id: string, description: string, circuit: string) {
     const response = await http.put("/circuits/" + id, { description, circuit })
-    return response.data
+    return response.status >= 200 && response.status < 300
 }

@@ -10,12 +10,14 @@ import { ElInput } from 'element-plus';
 
 const flagStore = useFlagsStore()
 
-const description = ref('')
+const description = ref('circuit description')
 
 const model = ref({
     gates: [],
     wires: []
 })
+const showSaved = ref(false)
+const showGenerating = ref(false)
 
 const updateModel = async (value: string) => {
     const code = router.currentRoute.value.params.code as string;
@@ -23,7 +25,11 @@ const updateModel = async (value: string) => {
         return
     }
 
-    await updateUserCircuit(code, description.value, value)
+    const success = await updateUserCircuit(code, description.value, value)
+    showSaved.value = success
+    console.log(success)
+
+    setTimeout(() => showSaved.value = false, 2000)
 };
 
 const width = ref(0);
@@ -53,8 +59,10 @@ onMounted(async () =>
 })
 
 const generateModel = async (prompt: string) => {
+    showGenerating.value = true
     const response = await requestGeneration(prompt, width.value, height.value)
     model.value = JSON.parse(response)
+    showGenerating.value = false
 }
 </script>
 
@@ -70,6 +78,14 @@ const generateModel = async (prompt: string) => {
     <div class="desc-container">
         <el-input v-model="description"></el-input>
     </div>
+
+    <div class="saved-container" v-if="showSaved">
+        <h3>Salvo!</h3>
+    </div>
+
+    <div class="generating-container" v-if="showGenerating">
+        <h3>Gerando...</h3>
+    </div>
 </template>
 
 <style scoped>
@@ -82,13 +98,13 @@ const generateModel = async (prompt: string) => {
 .ai-container {
     position: absolute;
     width: 100%;
-    bottom: 20px;
+    bottom: 60px;
 }
 
 .desc-container {
     position: absolute;
     width: 80px;
-    bottom: 40px;
+    bottom: 20px;
     opacity: 0.20;
     padding: 0px 20px;
     transition: width 0.4s ease-in-out;
@@ -99,7 +115,21 @@ const generateModel = async (prompt: string) => {
     position: absolute;
     width: calc(100vw - 40px);
     opacity: 1;
-    bottom: 40px;
+    bottom: 20px;
     padding: 0px 20px
+}
+
+.saved-container {
+    position: absolute;
+    top: 80px;
+    left: 20px;
+    opacity: 0.5;
+}
+
+.generating-container {
+    position: absolute;
+    top: 80px;
+    left: 20px;
+    opacity: 0.5;
 }
 </style>

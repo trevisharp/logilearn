@@ -39,7 +39,7 @@ builder.Services.Configure<FeatureFlags>(builder.Configuration);
 
 builder.Services.AddMemoryCache();
 
-builder.Services.AddTransient<ILLMService, OpenAILLMService>();
+builder.Services.AddTransient<ILLMService, GeminiLLMService>();
 builder.Services.AddTransient<IOAuthService, GithubOAuthService>();
 builder.Services.AddScoped<IGithubClientBuilder, GithubClientBuilder>();
 builder.Services.AddScoped<IStateManagerService, LocalCachedStateManagerService>();

@@ -41,7 +41,7 @@ public static class AIGeneratorEndpoints
                 """;
 
             var args = new LLMArgs {
-                Model = "gpt-5-mini",
+                Model = "gemini-3-flash-preview",
                 Messages = [
                     new ("developer", instructions),
                     new ("user", payload.Prompt)
