@@ -1,6 +1,5 @@
 using LogiLearn.Contracts.V1;
 using LogiLearn.Endpoints;
-using LogiLearn.Endpoints.Middlewares;
 using LogiLearn.Infrastructure;
 using LogiLearn.Infrastructure.GithubServices;
 using LogiLearn.Infrastructure.LLMServices;
@@ -54,8 +53,6 @@ app.UseRouting();
 app.UseSession();
 
 app.UseCors("FrontendPolicy");
-
-app.UseCRSFTokenMiddleware();
 
 app.MapV1Endpoints();
 
