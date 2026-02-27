@@ -81,6 +81,7 @@ public static class GithubGistsEndpoints
 
         route.MapPost("/circuits", async (HttpContext context,
             IConfiguration configuration,
+            IMemoryCache cache,
             ILogger<GistEdnpoints> logger,
             [FromServices]IGithubClientBuilder builder) =>
         {
@@ -88,6 +89,9 @@ public static class GithubGistsEndpoints
             if (token is null)
                 return Results.Unauthorized();
             
+            var cacheKey = $"{SHA256.HashData(Encoding.UTF8.GetBytes(token))}_gists";
+            cache.Remove(cacheKey);
+
             var client = builder.GetClient(token);
 
             var circuit = new CreateGistData {
@@ -118,6 +122,7 @@ public static class GithubGistsEndpoints
 
         route.MapPut("/circuits/{id}", async (string id,
             HttpContext context,
+            IMemoryCache cache,
             ILogger<GistEdnpoints> logger,
             [FromServices]IGithubClientBuilder builder,
             [FromBody]CircuitToSave circuit) =>
@@ -125,6 +130,9 @@ public static class GithubGistsEndpoints
             var token = context.Request.Cookies["session"];
             if (token is null)
                 return Results.Unauthorized();
+            
+            var cacheKey = $"{SHA256.HashData(Encoding.UTF8.GetBytes(token))}_gists";
+            cache.Remove(cacheKey);
             
             var client = builder.GetClient(token);
 

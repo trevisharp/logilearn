@@ -1,6 +1,7 @@
 import { AddGateCommand } from "../commands/AddGateCommand";
 import type { Command } from "../commands/Command";
 import { ConnectGateCommand } from "../commands/ConnectGateCommand";
+import { MoveGateCommand } from "../commands/MoveGateCommand";
 import type { Circuit } from "../engine/Circuit";
 import type { Gate } from "../engine/Gate";
 import { AndGate } from "../engine/gates/AndGate";
@@ -95,6 +96,15 @@ export function toModel(commands: Command[]): CircuitModel {
                 y: command.y
             })
             return
+        }
+
+        if (command instanceof MoveGateCommand) {
+            const gate = command.item as Gate
+            const data = model.gates.find(g => g.id == map.get(gate))
+            if (data === undefined)
+                return
+            data.x = command.end.x
+            data.y = command.end.y
         }
 
         if (command instanceof ConnectGateCommand) {

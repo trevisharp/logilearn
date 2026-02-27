@@ -27,7 +27,6 @@ const updateModel = async (value: string) => {
 
     const success = await updateUserCircuit(code, description.value, value)
     showSaved.value = success
-    console.log(success)
 
     setTimeout(() => showSaved.value = false, 2000)
 };

@@ -1,29 +1,31 @@
 import type Konva from "konva";
 import type { Command } from "./Command";
-import type { VisualItem } from "../rendering/VisualItem";
+import type { SimulationItem } from "../engine/SimulationItem";
 
 export class MoveGateCommand implements Command {
 
     constructor(
-        public item: VisualItem, 
+        public item: SimulationItem, 
         public start: Konva.Vector2d, 
         public end: Konva.Vector2d)
         { }
 
     do(): boolean {
-        if (this.item.group === null) {
+        const visual = this.item.getVisualItem()
+        if (visual.group === null) {
             return false
         }
-        this.item.group.position(this.end)
+        visual.group.position(this.end)
 
         return true
     }
 
     undo(): void {
-        if (this.item.group === null) {
+        const visual = this.item.getVisualItem()
+        if (visual.group === null) {
             return
         }
-        this.item.group.position(this.start)
+        visual.group.position(this.start)
     }
 
 }

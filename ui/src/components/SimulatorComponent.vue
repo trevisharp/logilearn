@@ -217,7 +217,7 @@ const handleDrop = () => {
     }
     
     const command = new MoveGateCommand(
-        simulationItem.getVisualItem(), pointerStart, pointerEnd
+        simulationItem, pointerStart, pointerEnd
     )
     docommand(command)
 
