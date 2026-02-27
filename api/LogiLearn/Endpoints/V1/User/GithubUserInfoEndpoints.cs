@@ -1,8 +1,12 @@
-using LogiLearn.Contracts.V1;
-using LogiLearn.Infrastructure.GithubServices;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace LogiLearn.Endpoints.V1.User;
+
+using Contracts.V1;
+using Infrastructure.GithubServices;
 
 public static class GithubUserInfoEndpoints
 {
@@ -10,18 +14,26 @@ public static class GithubUserInfoEndpoints
 
     public static IEndpointRouteBuilder MapGithubUserInfoEndpoints(this IEndpointRouteBuilder route)
     {
-        route.MapGet("/user", async (HttpContext request, [FromServices]IGithubClientBuilder builder) =>
+        route.MapGet("/user", async (
+            HttpContext request, 
+            IMemoryCache cache,
+            [FromServices]IGithubClientBuilder builder) =>
         {
-            var token = request.Request.Cookies
-                .FirstOrDefault(c => c.Key == "session").Value;
-            if (token is null or "")
+            if (!request.Request.Cookies.TryGetValue("session", out var token) || string.IsNullOrEmpty(token))
                 return Results.Unauthorized();
-            
-            var client = builder.GetClient(token);
 
-            var response = await client.GetAsync("/user");
-            
-            var content = await response.Content.ReadFromJsonAsync<GithubUserData>();
+            var cacheKey = $"{SHA256.HashData(Encoding.UTF8.GetBytes(token))}_user";
+            var content = await cache.GetOrCreateAsync(cacheKey, async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+
+                var client = builder.GetClient(token);
+                var response = await client.GetAsync("/user");
+                var content = await response.Content.ReadFromJsonAsync<GithubUserData>();
+
+                return content;
+            });
+
             return Results.Ok(content);
         });
 

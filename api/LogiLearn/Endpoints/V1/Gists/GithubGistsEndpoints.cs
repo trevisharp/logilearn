@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace LogiLearn.Endpoints.V1.Gists;
 
@@ -14,26 +17,34 @@ public static class GithubGistsEndpoints
     {
         route.MapGet("/circuits", async (
             HttpContext context,
+            IMemoryCache cache,
             [FromServices]IGithubClientBuilder builder,
             int page = 1) =>
         {
             var token = context.Request.Cookies["session"];
             if (token is null)
                 return Results.Unauthorized();
-            
-            var client = builder.GetClient(token);
-            
-            var response = await client.GetAsync($"/gists?per_page=12&page={page}");
 
-            if (!response.IsSuccessStatusCode)
+            var cacheKey = $"{SHA256.HashData(Encoding.UTF8.GetBytes(token))}_gists";
+            var circs = await cache.GetOrCreateAsync(cacheKey, async entry =>
+            {
+                var client = builder.GetClient(token);
+                var response = await client.GetAsync($"/gists?per_page=12&page={page}");
+
+                if (!response.IsSuccessStatusCode)
+                    return null;
+                
+                var gists = await response.Content.ReadFromJsonAsync<GithubGist[]>();
+                var circs = 
+                    from gist in gists
+                    where CircuitFile.ValidateFiles([ ..gist.Files.Keys ])
+                    select gist;
+                
+                return circs;
+            });
+
+            if (circs is null)
                 return Results.StatusCode(502);
-            
-            var gists = await response.Content.ReadFromJsonAsync<GithubGist[]>();
-
-            var circs = 
-                from gist in gists
-                where CircuitFile.ValidateFiles([ ..gist.Files.Keys ])
-                select gist;
             
             return Results.Ok(circs);
         }).WithMetadata(new RequireCSRFTokenAttribute());
