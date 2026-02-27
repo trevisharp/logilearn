@@ -1,11 +1,5 @@
 import axios from "axios"
 
-function getCookie(name: string) {
-  const match = document.cookie.match(new RegExp(name + '=([^(;)]+)'));
-  if (match) return match[1];
-  return null;
-}
-
 const http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 0,
@@ -13,7 +7,7 @@ const http = axios.create({
 })
 
 http.interceptors.request.use((config) => {
-  const token = getCookie("csrf-token");
+  const token = sessionStorage.getItem("csrf-token");
   if (token) {
     config.headers["X-CSRF-Token"] = token;
   }

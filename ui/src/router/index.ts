@@ -1,3 +1,4 @@
+import FinishLogin from '@/views/FinishLogin.vue'
 import LoginView from '@/views/LoginView.vue'
 import MainView from '@/views/MainView.vue'
 import SimulationView from '@/views/SimulationView.vue'
@@ -11,6 +12,7 @@ const router = createRouter({
     { path: "/simulation/:code", component: SimulationView },
     { path: "/login", component: LoginView },
     { path: "/profile", component: UserView },
+    { path: "/finishlogin/:token", component: FinishLogin },
   ],
 })
 

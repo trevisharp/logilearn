@@ -87,7 +87,7 @@ public static class GithubOAuthEndpoints
                 SameSite = SameSiteMode.None
             });
 
-            return Results.Redirect($"{fronturl}/profile");
+            return Results.Redirect($"{fronturl}/finishlogin/{csrfToken}");
         });
 
         return route;
